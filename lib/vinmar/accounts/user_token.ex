@@ -1,6 +1,9 @@
 defmodule Vinmar.Accounts.UserToken do
-  use Ecto.Schema
+  @moduledoc false
+
+  use TypedEctoSchema
   import Ecto.Query
+  alias Vinmar.Accounts.User
   alias Vinmar.Accounts.UserToken
 
   @hash_algorithm :sha256
@@ -13,11 +16,16 @@ defmodule Vinmar.Accounts.UserToken do
   @change_email_validity_in_days 7
   @session_validity_in_days 60
 
-  schema "users_tokens" do
+  @timestamps_opts [type: :utc_datetime]
+  @primary_key {:id, Ecto.UUID, autogenerate: true}
+  typed_schema "users_tokens" do
     field :token, :binary
     field :context, :string
     field :sent_to, :string
-    belongs_to :user, Vinmar.Accounts.User
+
+    belongs_to :user, User,
+      foreign_key: :user_id,
+      type: Ecto.UUID
 
     timestamps(updated_at: false)
   end

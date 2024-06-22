@@ -61,7 +61,9 @@ defmodule Vinmar.MixProject do
       {:bandit, "~> 1.2"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:xlsx_reader, "~> 0.8.0"},
-      {:carbonite, "~> 0.11.0"}
+      {:carbonite, "~> 0.11.0"},
+      {:typed_ecto_schema, "~> 0.4.1", runtime: false},
+      {:money, "~> 1.12"}
     ]
   end
 
