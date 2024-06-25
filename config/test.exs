@@ -26,6 +26,8 @@ config :vinmar, VinmarWeb.Endpoint,
 # In test we don't send emails.
 config :vinmar, Vinmar.Mailer, adapter: Swoosh.Adapters.Test
 
+config :vinmar, carbonite_mode: :ignore
+
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
 

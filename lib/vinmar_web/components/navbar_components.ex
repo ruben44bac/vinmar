@@ -1,4 +1,4 @@
-defmodule VinmarWeb.NavbarComponents do
+defmodule VinmarWeb.NavbarComponent do
   @moduledoc """
 
   """
@@ -6,17 +6,17 @@ defmodule VinmarWeb.NavbarComponents do
 
   def render(assigns) do
     ~H"""
-    <div class="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0">
+    <div class="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 p-3">
       <!-- Sidebar component, swap this element with another sidebar if you like -->
-      <div class="flex flex-col flex-grow bg-white pt-5 pb-4 overflow-y-auto">
-        <div class="flex items-center flex-shrink-0 px-4 text-3xl text-white font-bold text-center">
-          <img src="/images/logo.png" class="w-3/4 h-auto" />
+      <div class="flex flex-col flex-grow bg-slate-900 rounded-lg overflow-y-auto p-3">
+        <div class="flex items-center flex-shrink-0 text-3xl bg-slate-100 rounded-lg py-6 flex font-bold text-center">
+          <img src="/images/logo.png" class="w-3/4 h-auto mx-auto" />
         </div>
         <nav
           class="mt-5 flex-1 flex flex-col divide-y divide-gray-300 overflow-y-auto"
           aria-label="Sidebar"
         >
-          <div class="px-2 space-y-1">
+          <div class="space-y-1">
             <%= for s <- @sections do %>
               <a href={s.url} class={s.class} aria-current="page">
                 <%= Phoenix.HTML.raw(s.svg) %>
@@ -25,14 +25,14 @@ defmodule VinmarWeb.NavbarComponents do
             <% end %>
           </div>
           <div class="pt-2 mt-auto">
-            <div class="px-2 space-y-1">
+            <div class=" space-y-1">
               <a
                 href="#"
-                class="group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md text-green-800 hover:text-green-900 hover:font-bold hover:bg-green-200"
+                class="group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md text-slate-100 hover:text-green-900 hover:font-bold hover:bg-green-200"
               >
                 <!-- Heroicon name: outline/cog -->
                 <svg
-                  class="mr-4 h-6 w-6 text-green-900"
+                  class="mr-4 h-6 w-6"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -56,11 +56,11 @@ defmodule VinmarWeb.NavbarComponents do
               </a>
               <a
                 href="#"
-                class="group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md text-green-800 hover:text-green-900 hover:font-bold hover:bg-green-200"
+                class="group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md text-slate-100 hover:text-green-900 hover:font-bold hover:bg-green-200"
               >
                 <!-- Heroicon name: outline/question-mark-circle -->
                 <svg
-                  class="mr-4 h-6 w-6 text-green-900"
+                  class="mr-4 h-6 w-6"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -78,11 +78,11 @@ defmodule VinmarWeb.NavbarComponents do
               </a>
               <a
                 href="#"
-                class="group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md text-green-800 hover:text-green-900 hover:font-bold hover:bg-green-200"
+                class="group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md text-slate-100 hover:text-green-900 hover:font-bold hover:bg-green-200"
               >
                 <!-- Heroicon name: outline/shield-check -->
                 <svg
-                  class="mr-4 h-6 w-6 text-green-900"
+                  class="mr-4 h-6 w-6"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -100,11 +100,11 @@ defmodule VinmarWeb.NavbarComponents do
               </a>
               <a
                 href="/login"
-                class="group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md text-green-800 hover:text-green-900 hover:font-bold hover:bg-green-200"
+                class="group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md text-slate-100 hover:text-green-900 hover:font-bold hover:bg-green-200"
               >
                 <!-- Heroicon name: outline/shield-check -->
                 <svg
-                  class="mr-4 h-5 w-5 text-green-900"
+                  class="mr-4 h-5 w-5"
                   xmlns="http://www.w3.org/2000/svg"
                   stroke="currentColor"
                   viewBox="0 0 512 512"
@@ -136,29 +136,32 @@ defmodule VinmarWeb.NavbarComponents do
   defp sections(id \\ 0) do
     [
       %{id: 1, name: "Home", url: "/", svg: "
-        <svg class=\"mr-4 flex-shrink-0 h-6 w-6 text-green-900\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" aria-hidden=\"true\">
+        <svg class=\"mr-4 flex-shrink-0 h-6 w-6\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" aria-hidden=\"true\">
           <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6\" />
         </svg>"},
       %{id: 2, name: "Customer", url: "/customer", svg: "
-        <svg  class=\"mr-4 flex-shrink-0 h-6 w-6 text-green-900\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\">
-          <path d=\"M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2\"></path>
-          <circle cx=\"9\" cy=\"7\" r=\"4\"></circle>
-          <path d=\"M23 21v-2a4 4 0 0 0-3-3.87\"></path>
-          <path d=\"M16 3.13a4 4 0 0 1 0 7.75\"></path>
-        </svg>"},
-      %{id: 3, name: "Summary", url: "/summary", svg: "
-        <svg  class=\"mr-4 flex-shrink-0 h-6 w-6 text-green-900\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\">
+        <svg  class=\"mr-4 flex-shrink-0 h-6 w-6\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\">
           <path d=\"M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2\"></path>
           <circle cx=\"9\" cy=\"7\" r=\"4\"></circle>
           <path d=\"M23 21v-2a4 4 0 0 0-3-3.87\"></path>
           <path d=\"M16 3.13a4 4 0 0 1 0 7.75\"></path>
         </svg>"},
       %{
+        id: 3,
+        name: "Summary",
+        url: "/summary",
+        svg: """
+        <svg class=\"mr-4 flex-shrink-0 h-6 w-6\"  xmlns="http://www.w3.org/2000/svg" width=\"24\" height=\"24\" fill=\"currentColor\" viewBox=\"0 0 384 512\">
+          <path d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM64 80c0-8.8 7.2-16 16-16h64c8.8 0 16 7.2 16 16s-7.2 16-16 16H80c-8.8 0-16-7.2-16-16zm0 64c0-8.8 7.2-16 16-16h64c8.8 0 16 7.2 16 16s-7.2 16-16 16H80c-8.8 0-16-7.2-16-16zm128 72c8.8 0 16 7.2 16 16v17.3c8.5 1.2 16.7 3.1 24.1 5.1c8.5 2.3 13.6 11 11.3 19.6s-11 13.6-19.6 11.3c-11.1-3-22-5.2-32.1-5.3c-8.4-.1-17.4 1.8-23.6 5.5c-5.7 3.4-8.1 7.3-8.1 12.8c0 3.7 1.3 6.5 7.3 10.1c6.9 4.1 16.6 7.1 29.2 10.9l.5 .1 0 0 0 0c11.3 3.4 25.3 7.6 36.3 14.6c12.1 7.6 22.4 19.7 22.7 38.2c.3 19.3-9.6 33.3-22.9 41.6c-7.7 4.8-16.4 7.6-25.1 9.1V440c0 8.8-7.2 16-16 16s-16-7.2-16-16V422.2c-11.2-2.1-21.7-5.7-30.9-8.9l0 0 0 0c-2.1-.7-4.2-1.4-6.2-2.1c-8.4-2.8-12.9-11.9-10.1-20.2s11.9-12.9 20.2-10.1c2.5 .8 4.8 1.6 7.1 2.4l0 0 0 0 0 0c13.6 4.6 24.6 8.4 36.3 8.7c9.1 .3 17.9-1.7 23.7-5.3c5.1-3.2 7.9-7.3 7.8-14c-.1-4.6-1.8-7.8-7.7-11.6c-6.8-4.3-16.5-7.4-29-11.2l-1.6-.5 0 0c-11-3.3-24.3-7.3-34.8-13.7c-12-7.2-22.6-18.9-22.7-37.3c-.1-19.4 10.8-32.8 23.8-40.5c7.5-4.4 15.8-7.2 24.1-8.7V232c0-8.8 7.2-16 16-16z"/>
+        </svg>
+        """
+      },
+      %{
         id: 4,
         name: "Local currency",
         url: "/local_currency",
         svg: """
-        <svg class=\"mr-4 flex-shrink-0 h-6 w-6 text-green-900\"  xmlns="http://www.w3.org/2000/svg" width=\"24\" height=\"24\" fill=\"currentColor\" viewBox=\"0 0 512 512\">
+        <svg class=\"mr-4 flex-shrink-0 h-6 w-6\"  xmlns="http://www.w3.org/2000/svg" width=\"24\" height=\"24\" fill=\"currentColor\" viewBox=\"0 0 512 512\">
           <path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/>
         </svg>
         """
@@ -169,8 +172,8 @@ defmodule VinmarWeb.NavbarComponents do
       |> Map.put(
         :class,
         if(id == s.id,
-          do: "bg-rose-800 text-white",
-          else: "text-green-800 hover:text-green-900 hover:font-bold hover:bg-green-200"
+          do: "text-green-800 text-white",
+          else: "text-slate-100 hover:text-green-900 hover:font-bold hover:bg-green-200"
         ) <> " group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md"
       )
     end)

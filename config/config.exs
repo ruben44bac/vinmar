@@ -31,6 +31,8 @@ config :vinmar, VinmarWeb.Endpoint,
 # at the `config/runtime.exs`.
 config :vinmar, Vinmar.Mailer, adapter: Swoosh.Adapters.Local
 
+config :vinmar, carbonite_mode: :capture
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.17.11",

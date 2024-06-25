@@ -1,4 +1,5 @@
 defmodule VinmarWeb.Router do
+  alias Credo.CLI.Output.Summary
   use VinmarWeb, :router
 
   import VinmarWeb.UserAuth
@@ -19,7 +20,6 @@ defmodule VinmarWeb.Router do
 
   scope "/", VinmarWeb do
     pipe_through :browser
-
   end
 
   # Other scopes may use custom stacks.
@@ -69,6 +69,15 @@ defmodule VinmarWeb.Router do
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
 
       live "/", HomeLive.Index, :index
+
+      live "/customer", CustomerLive.Index, :index
+      live "/customer/form", CustomerLive.Form, :new
+
+      live "/summary", SummaryLive.Index, :index
+      live "/summary/form", SummaryLive.Form, :new
+
+      live "/local_currency", LocalCurrencyLive.Index, :index
+      live "/local_currency/form", LocalCurrencyLive.Form, :new
     end
   end
 
