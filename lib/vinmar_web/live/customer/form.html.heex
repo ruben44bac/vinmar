@@ -3,171 +3,205 @@
   <div class=" w-full mt-3">
     <div class="col-span-12 bg-white rounded-lg p-8 border">
       <div class="block text-xl font-bold text-slate-800"><%= @page_title %></div>
-      <div class="text-slate-600 font-medium block">Enter the data related to the client. If you have questions about how to enter the data, use the information button next to each section.</div>
+      <div class="text-slate-600 font-medium block">
+        Enter the data related to the client. If you have questions about how to enter the data, use the information button next to each section.
+      </div>
       <form phx-submit="submit_form">
         <div class="w-full grid grid-cols-1 lg:grid-cols-2 lg:gap-4 mt-1">
           <div class="w-full">
-            
-            <.live_component 
-              module={VinmarWeb.InputComponent} 
-              id="sap_id" 
-              name="SAP Number" 
-              form={@form} 
-              type="text" 
-              validations={[:required]} 
-              required={true} />
+            <.live_component
+              module={VinmarWeb.InputComponent}
+              id="sap_id"
+              name="SAP Number"
+              form={@form}
+              type="text"
+              validations={[:required]}
+              required={true}
+            />
 
-            <.live_component 
-              module={VinmarWeb.InputComponent} 
-              id="name" 
-              name="Name" 
-              form={@form} 
-              type="text" 
-              validations={[:required]} 
-              required={true} />
-            
-            <.live_component 
-              module={VinmarWeb.SelectComponent} 
-              id="customer_type_id" 
-              name="Type of Customer" 
-              options={@option_customer_types} 
-              form={@form} 
-              validations={[:required]} 
-              required={true} />
+            <.live_component
+              module={VinmarWeb.InputComponent}
+              id="name"
+              name="Name"
+              form={@form}
+              type="text"
+              validations={[:required]}
+              required={true}
+            />
 
+            <.live_component
+              module={VinmarWeb.SelectComponent}
+              id="customer_type_id"
+              name="Type of Customer"
+              options={@option_customer_types}
+              form={@form}
+              validations={[:required]}
+              required={true}
+            />
           </div>
 
           <div class="w-full">
-            
-            <.live_component 
-              module={VinmarWeb.InputComponent} 
-              id="created_at" 
-              name="Vinmar Customer Since" 
-              form={@form} 
-              type="date", 
-              validations={[]} 
-              required={false} />
-            
-            <.live_component 
-              module={VinmarWeb.InputComponent} 
-              id="inception_at" 
-              name="Customer Inception Date" 
-              form={@form} 
-              type="date" 
-              validations={[]} 
-              required={false} />
-            
-            <.live_component 
-              module={VinmarWeb.SelectComponent} 
-              id="country_id" 
-              name="Country of Customer" 
-              options={@option_countries} 
-              form={@form} 
-              validations={[:required]} 
-              return={:country}
-              required={true} />
+            <.live_component
+              module={VinmarWeb.InputComponent}
+              id="created_at"
+              name="Vinmar Customer Since"
+              form={@form}
+              type="date"
+              ,
+              validations={[]}
+              required={false}
+            />
 
+            <.live_component
+              module={VinmarWeb.InputComponent}
+              id="inception_at"
+              name="Customer Inception Date"
+              form={@form}
+              type="date"
+              validations={[:required]}
+              required={true}
+            />
+
+            <.live_component
+              module={VinmarWeb.SelectComponent}
+              id="country_id"
+              name="Country of Customer"
+              options={@option_countries}
+              form={@form}
+              validations={[:required]}
+              return={:country}
+              required={true}
+            />
           </div>
           <%= if !is_nil(@country_selected) do %>
-          <div class="lg:col-span-2 pt-6 lg:pt-0">
-            <div class={if @country_selected.insurance_coverage == "MARKEL", 
-              do: "bg-green-100 rounded-lg grid grid-cols-2 lg:grid-cols-5 gap-4 p-4 relative", 
-              else: "bg-red-100 rounded-lg grid grid-cols-2 lg:grid-cols-5 gap-4 p-4 relative"}>
-              <button phx-click="country_detail" type="button" class="absolute top-0 right-0 h-6 w-6 rounded-full bg-slate-800 text-white inline-flex items-center mt-2 mr-2">
+            <div class="lg:col-span-2 pt-6 lg:pt-0">
+              <div class={
+                if @country_selected.insurance_coverage == "MARKEL",
+                  do:
+                    "bg-green-100 rounded-lg grid grid-cols-2 lg:grid-cols-5 gap-4 p-4 relative",
+                  else: "bg-red-100 rounded-lg grid grid-cols-2 lg:grid-cols-5 gap-4 p-4 relative"
+              }>
+                <button
+                  phx-click="country_detail"
+                  type="button"
+                  class="absolute top-0 right-0 h-6 w-6 rounded-full bg-slate-800 text-white inline-flex items-center mt-2 mr-2"
+                >
+                  <%= if @country_detail do %>
+                    <svg
+                      class="w-4 h-4 mx-auto"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 512 512"
+                    >
+                      <path d="M233.4 105.4c12.5-12.5 32.8-12.5 45.3 0l192 192c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L256 173.3 86.6 342.6c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l192-192z" />
+                    </svg>
+                  <% else %>
+                    <svg
+                      class="w-4 h-4 mx-auto"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 512 512"
+                    >
+                      <path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z" />
+                    </svg>
+                  <% end %>
+                </button>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700">Rating</label>
+                  <label class="text-sm"><%= @country_selected.rating %></label>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-bold text-slate-700">Insurance Coverage</label>
+                  <label class="text-sm"><%= @country_selected.insurance_coverage %></label>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-bold text-slate-700">Score</label>
+                  <label class="text-sm"><%= @country_selected.score %></label>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-bold text-slate-700">Total</label>
+                  <label class="text-sm"><%= @country_selected.total %></label>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-bold text-slate-700">Mean Score</label>
+                  <label class="text-sm"><%= @country_selected.mean_score %></label>
+                </div>
                 <%= if @country_detail do %>
-                
-                <svg class="w-4 h-4 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 512 512">
-                  <path d="M233.4 105.4c12.5-12.5 32.8-12.5 45.3 0l192 192c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L256 173.3 86.6 342.6c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l192-192z"/>
-                </svg>
-                <% else %>
-                <svg class="w-4 h-4 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 512 512">
-                  <path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"/>
-                </svg>
-                <% end %> 
-              </button>
-              <div>
-                <label class="block text-xs font-bold text-slate-700">Rating</label>
-                <label class="text-sm"><%= @country_selected.rating %></label>
+                  <div>
+                    <label class="block text-xs font-bold text-slate-700">
+                      Markel Rating 2015
+                    </label>
+                    <label class="text-sm"><%= @country_selected.mr_2015 %></label>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-bold text-slate-700">
+                      (Foreign Currency) S&P Rating
+                    </label>
+                    <label class="text-sm"><%= @country_selected.sp_rating %></label>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-bold text-slate-700">S&P Score</label>
+                    <label class="text-sm"><%= @country_selected.sp_score %></label>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-bold text-slate-700">D&B Rating</label>
+                    <label class="text-sm"><%= @country_selected.db_rating %></label>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-bold text-slate-700">D&B Score</label>
+                    <label class="text-sm"><%= @country_selected.db_score %></label>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-bold text-slate-700">Coface @ Rating</label>
+                    <label class="text-sm"><%= @country_selected.coface_rating %></label>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-bold text-slate-700">Coface Score</label>
+                    <label class="text-sm"><%= @country_selected.coface_score %></label>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-bold text-slate-700">EIU Rating</label>
+                    <label class="text-sm"><%= @country_selected.eiu_rating %></label>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-bold text-slate-700">EIU Score</label>
+                    <label class="text-sm"><%= @country_selected.eiu_score %></label>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-bold text-slate-700">I.H.S. Rating</label>
+                    <label class="text-sm"><%= @country_selected.ihs_rating %></label>
+                  </div>
+                <% end %>
               </div>
-
-              <div>
-                <label class="block text-xs font-bold text-slate-700">Insurance Coverage</label>
-                <label class="text-sm"><%= @country_selected.insurance_coverage %></label>
-              </div>
-
-              <div>
-                <label class="block text-xs font-bold text-slate-700">Score</label>
-                <label class="text-sm"><%= @country_selected.score %></label>
-              </div>
-
-              <div>
-                <label class="block text-xs font-bold text-slate-700">Total</label>
-                <label class="text-sm"><%= @country_selected.total %></label>
-              </div>
-
-              <div>
-                <label class="block text-xs font-bold text-slate-700">Mean Score</label>
-                <label class="text-sm"><%= @country_selected.mean_score %></label>
-              </div>
-              <%= if @country_detail do %>
-                <div>
-                  <label class="block text-xs font-bold text-slate-700">Markel Rating 2015</label>
-                  <label class="text-sm"><%= @country_selected.mr_2015 %></label>
-                </div>  
-                <div>
-                  <label class="block text-xs font-bold text-slate-700">(Foreign Currency) S&P Rating</label>
-                  <label class="text-sm"><%= @country_selected.sp_rating %></label>
-                </div>  
-                <div>
-                  <label class="block text-xs font-bold text-slate-700">S&P Score</label>
-                  <label class="text-sm"><%= @country_selected.sp_score %></label>
-                </div>  
-                <div>
-                  <label class="block text-xs font-bold text-slate-700">D&B Rating</label>
-                  <label class="text-sm"><%= @country_selected.db_rating %></label>
-                </div>  
-                <div>
-                  <label class="block text-xs font-bold text-slate-700">D&B Score</label>
-                  <label class="text-sm"><%= @country_selected.db_score %></label>
-                </div>  
-                <div>
-                  <label class="block text-xs font-bold text-slate-700">Coface @ Rating</label>
-                  <label class="text-sm"><%= @country_selected.coface_rating %></label>
-                </div>  
-                <div>
-                  <label class="block text-xs font-bold text-slate-700">Coface Score</label>
-                  <label class="text-sm"><%= @country_selected.coface_score %></label>
-                </div>  
-                <div>
-                  <label class="block text-xs font-bold text-slate-700">EIU Rating</label>
-                  <label class="text-sm"><%= @country_selected.eiu_rating %></label>
-                </div>  
-                <div>
-                  <label class="block text-xs font-bold text-slate-700">EIU Score</label>
-                  <label class="text-sm"><%= @country_selected.eiu_score %></label>
-                </div>  
-                <div>
-                  <label class="block text-xs font-bold text-slate-700">I.H.S. Rating</label>
-                  <label class="text-sm"><%= @country_selected.ihs_rating %></label>
-                </div>  
-              <% end%>
             </div>
-          </div>
           <% end %>
           <div class="lg:col-span-2">
             <div class="w-full flex pt-6 lg:pt-0 lg:mt-3">
               <div class="mx-auto relative">
                 <div class="inline-flex items-center">
-                  <button type="button" class="mr-2 px-6 py-2 rounded-lg bg-slate-300 text-sm font-bold text-slate-700 hover:bg-slate-500 hover:text-slate-100">
+                  <button
+                    type="button"
+                    class="mr-2 px-6 py-2 rounded-lg bg-slate-300 text-sm font-bold text-slate-700 hover:bg-slate-500 hover:text-slate-100"
+                  >
                     Cancel
                   </button>
 
                   <%= if @valid_form do %>
-                    <button type="submit" class="ml-2 px-8 py-2 rounded-lg bg-green-800 text-sm font-bold text-white hover:bg-green-300 hover:text-green-900">
+                    <button
+                      type="submit"
+                      class="ml-2 px-8 py-2 rounded-lg bg-green-800 text-sm font-bold text-white hover:bg-green-300 hover:text-green-900"
+                    >
                       Save
                     </button>
                   <% else %>
-                    <button type="submit" class="ml-2 px-8 py-2 rounded-lg bg-red-800 text-sm font-bold text-white hover:bg-red-300 hover:text-red-900">
+                    <button
+                      type="submit"
+                      class="ml-2 px-8 py-2 rounded-lg bg-red-800 text-sm font-bold text-white hover:bg-red-300 hover:text-red-900"
+                    >
                       Save
                     </button>
                   <% end %>
@@ -182,9 +216,6 @@
           </div>
         </div>
       </form>
-
-      
-
     </div>
   </div>
 </div>

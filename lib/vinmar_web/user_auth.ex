@@ -1,4 +1,6 @@
 defmodule VinmarWeb.UserAuth do
+  @moduledoc false
+
   use VinmarWeb, :verified_routes
 
   import Plug.Conn

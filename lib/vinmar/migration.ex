@@ -1,4 +1,6 @@
 defmodule Vinmar.Migration do
+  @moduledoc false
+
   def test do
     "/Users/rubenbaezacolin/Downloads/FA_test.xlsx"
     |> build_data()

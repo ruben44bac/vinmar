@@ -72,6 +72,7 @@ defmodule VinmarWeb.Router do
 
       live "/customer", CustomerLive.Index, :index
       live "/customer/form", CustomerLive.Form, :new
+      live "/customer/form/:id", CustomerLive.Form, :edit
 
       live "/summary", SummaryLive.Index, :index
       live "/summary/form", SummaryLive.Form, :new

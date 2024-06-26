@@ -1,7 +1,8 @@
 defmodule VinmarWeb.CustomerLive.Form do
   use VinmarWeb, :live_view
 
-  import VinmarWeb.Utils.Form, only: [convert_options: 2]
+  import VinmarWeb.Utils.Form,
+    only: [convert_options: 2, format_dates_to_datetime: 2, convert_struct_form: 1]
 
   alias Vinmar.Customers.{
     CustomerManager,
@@ -16,6 +17,7 @@ defmodule VinmarWeb.CustomerLive.Form do
     {:ok,
      assign(socket,
        tree: [:home, :customer_list],
+       customer: nil,
        option_customer_types: [],
        option_countries: [],
        country_selected: nil,
@@ -35,14 +37,19 @@ defmodule VinmarWeb.CustomerLive.Form do
   @impl true
   def handle_event("submit_form", params, socket) do
     with :ok <- validate_form(params) do
-      CustomerManager.create(params, [], %{
+      params
+      |> format_dates_to_datetime(["created_at", "inception_at"])
+      |> CustomerManager.create([], %{
         type: "Create customer",
         transaction_responsible: socket.assigns.current_user.id
       })
       |> case do
-        {:ok, customer} ->
+        {:ok, %{create_entity: customer}} ->
           {:noreply,
-           socket |> assign(form: params) |> put_flash(:info, "#{customer.name} was created.")}
+           socket
+           |> assign(form: params)
+           |> put_flash(:info, "#{customer.name} was created.")
+           |> redirect(to: "/customer")}
 
         {:error, _atom, error, _data} ->
           {:noreply, socket |> assign(form: params) |> put_flash(:error, inspect(error))}
@@ -101,6 +108,19 @@ defmodule VinmarWeb.CustomerLive.Form do
 
   defp apply_action(socket, :new, _params) do
     assign(socket, page_title: "New customer", tree: socket.assigns.tree ++ [:new_customer])
+  end
+
+  defp apply_action(socket, :edit, %{"id" => id}) do
+    customer =
+      CustomerManager.get!(id)
+      |> IO.inspect()
+
+    assign(socket,
+      page_title: "Edit customer",
+      customer: customer,
+      form: convert_struct_form(customer),
+      tree: socket.assigns.tree ++ [:new_customer]
+    )
   end
 
   defp validate_form(params) do

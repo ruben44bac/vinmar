@@ -19,7 +19,7 @@ defmodule VinmarWeb.InputComponent do
             else: "mt-1 rounded px-2 py-1 border-2 border-red-600 w-full bg-red-50"
         }
         required={@required}
-        phx-keyup="input_changes"
+        phx-change="input_changes"
         phx-target={@myself}
       />
       <%= if !@valid do %>
@@ -58,7 +58,8 @@ defmodule VinmarWeb.InputComponent do
      )}
   end
 
-  def handle_event("input_changes", %{"value" => value}, socket) do
+  def handle_event("input_changes", %{"_target" => [target]} = params, socket) do
+    value = Map.get(params, target)
     {valid, error_message} = validate_input(socket.assigns.validations, value)
 
     form = Map.put(socket.assigns.form, socket.assigns.id, value)
