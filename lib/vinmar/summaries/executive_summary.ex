@@ -83,7 +83,7 @@ defmodule Vinmar.Summaries.ExecutiveSummary do
       foreign_key: :current_insurance_company_id,
       type: Ecto.UUID
 
-    belongs_to :insurance_company, InsuranceCompany,
+    belongs_to :request_insurance_company, InsuranceCompany,
       foreign_key: :request_insurance_company_id,
       type: Ecto.UUID
 

@@ -83,5 +83,17 @@ defmodule VinmarWeb.BreadcrumbComponent do
   defp get_tree(:new_customer),
     do: %{link: "/customer/form", name: "New Customer", key: :new_customer}
 
+  defp get_tree(:edit_customer),
+    do: %{link: "#", name: "Edit Customer", key: :edit_customer}
+
+  defp get_tree(:summary_list),
+    do: %{link: "/summary", name: "Summaries", key: :summary_list}
+
+  defp get_tree(:new_summary),
+    do: %{link: "/summary/form", name: "New Summary", key: :new_summary}
+
+  defp get_tree(:edit_summary),
+    do: %{link: "#", name: "Edit Summary", key: :edit_summary}
+
   defp get_tree(_atom), do: %{link: "/", name: "", key: :atom}
 end

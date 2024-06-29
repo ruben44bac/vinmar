@@ -15,7 +15,7 @@ defmodule Vinmar.Customers.Customer do
   @required_fields [:inception_at, :customer_type_id, :country_id]
 
   typed_schema "customers" do
-    field :sap_id, :integer
+    field :sap_id, :string
     field :name, :string
     field :created_at, :utc_datetime
     field :inception_at, :utc_datetime

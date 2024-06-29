@@ -422,14 +422,14 @@ defmodule Vinmar.BaseManager do
 
   def do_update(
         {repo, schema},
-        {struct, attrs, options, %{type: type, transaction_responsible: transaction_responsible}}
+        {struct, attrs, %{type: type, transaction_responsible: transaction_responsible}}
       ) do
     Ecto.Multi.new()
     |> Carbonite.Multi.insert_transaction(%{
       meta: %{type: type, transaction_responsible: transaction_responsible}
     })
     |> Ecto.Multi.update(:update_entity, schema.changeset(struct, attrs))
-    |> repo.transaction(options)
+    |> repo.transaction()
   end
 
   def do_update!({repo, schema}, {struct, attrs}) do
