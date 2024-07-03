@@ -18,10 +18,26 @@ defmodule VinmarWeb.Utils.Form do
     |> then(&Map.merge(form, &1))
   end
 
+  def format_money(form, keys, type) do
+    form
+    |> Map.take(keys)
+    |> Enum.map(&new_money(&1, type))
+    |> Map.new()
+    |> then(&Map.merge(form, &1))
+  end
+
   def convert_struct_form(struct) do
     struct
     |> Map.drop([:__meta__, :__struct__])
     |> Enum.map(fn {k, v} -> {Atom.to_string(k), v} end)
+    |> Map.new()
+  end
+
+  def convert_struct_form(struct, instructions) do
+    struct
+    |> Map.drop([:__meta__, :__struct__])
+    |> Enum.map(fn {k, v} -> {Atom.to_string(k), v} end)
+    |> convert_instructions(instructions)
     |> Map.new()
   end
 
@@ -34,6 +50,48 @@ defmodule VinmarWeb.Utils.Form do
       {:ok, date} -> date
       _ -> ""
     end
+  end
+
+  def format_money_form(value) when value in [nil, ""], do: ""
+
+  def format_money_form(value) do
+    value
+    |> Money.to_decimal()
+    |> Decimal.to_string()
+  end
+
+  defp convert_instructions(data_list, %{date: options} = instructions) do
+    data_filter =
+      data_list
+      |> Enum.filter(fn {k, v} -> k in options end)
+      |> Enum.map(fn {k, v} -> {k, format_date_form(v)} end)
+
+    data_list
+    |> Enum.reject(fn {k, v} -> k in options end)
+    |> Kernel.++(data_filter)
+    |> convert_instructions(Map.delete(instructions, :date))
+  end
+
+  defp convert_instructions(data_list, %{money: options} = instructions) do
+    data_filter =
+      data_list
+      |> Enum.filter(fn {k, v} -> k in options end)
+      |> Enum.map(fn {k, v} -> {k, format_money_form(v)} end)
+
+    data_list
+    |> Enum.reject(fn {k, v} -> k in options end)
+    |> Kernel.++(data_filter)
+    |> convert_instructions(Map.delete(instructions, :money))
+  end
+
+  defp convert_instructions(data_list, _instructuons), do: data_list
+
+  defp new_money({k, v}, _type) when v in [nil, ""], do: {k, nil}
+
+  defp new_money({k, v}, type) do
+    type
+    |> Money.new(v)
+    |> then(&{k, &1})
   end
 
   defp convert_date_to_datetime({k, v}) when v in [nil, ""], do: {k, nil}

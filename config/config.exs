@@ -33,6 +33,24 @@ config :vinmar, Vinmar.Mailer, adapter: Swoosh.Adapters.Local
 
 config :vinmar, carbonite_mode: :capture
 
+config :ex_cldr,
+  default_locale: "en",
+  json_library: Jason
+
+config :ex_money,
+  exchange_rates_retrieve_every: 300_000,
+  api_module: Money.ExchangeRates.OpenExchangeRates,
+  callback_module: Money.ExchangeRates.Callback,
+  exchange_rates_cache_module: Money.ExchangeRates.Cache.Ets,
+  preload_historic_rates: nil,
+  retriever_options: nil,
+  log_failure: :warning,
+  log_info: :info,
+  log_success: nil,
+  json_library: Jason,
+  default_cldr_backend: Vinmar.Cldr,
+  exclude_protocol_implementations: []
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.17.11",

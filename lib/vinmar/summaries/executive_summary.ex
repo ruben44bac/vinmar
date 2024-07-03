@@ -11,26 +11,17 @@ defmodule Vinmar.Summaries.ExecutiveSummary do
     ReviewedPeriod,
     CollateralType,
     InsuranceCompany,
-    FinancialStatementSource
+    FinancialStatementSource,
+    Review
   }
 
   @timestamps_opts [type: :utc_datetime]
   @primary_key {:id, Ecto.UUID, autogenerate: true}
   @optional_fields [
-    :customer_id,
-    :user_id
-  ]
-  @required_fields [
     :version,
     :version_date,
-    :reviewed_at,
-    :next_reviewed_at,
-    :current_credit_limit,
-    :current_insurance_coverage,
-    :request_credit_limit,
-    :request_insurance_coverage,
-    :amount,
-    :last_expirated_at,
+    :customer_id,
+    :user_id,
     :dra,
     :recommended_limit,
     :credit_agency_rating,
@@ -47,7 +38,17 @@ defmodule Vinmar.Summaries.ExecutiveSummary do
     :current_insurance_company_id,
     :request_insurance_company_id,
     :collateral_type_id,
-    :reviewed_period_id
+    :reviewed_period_id,
+    :last_expirated_at
+  ]
+  @required_fields [
+    :reviewed_at,
+    :next_reviewed_at,
+    :current_credit_limit,
+    :current_insurance_coverage,
+    :request_credit_limit,
+    :request_insurance_coverage,
+    :amount
   ]
 
   typed_schema "executive_summaries" do
@@ -55,20 +56,20 @@ defmodule Vinmar.Summaries.ExecutiveSummary do
     field :version_date, :date
     field :reviewed_at, :utc_datetime
     field :next_reviewed_at, :utc_datetime
-    field :current_credit_limit, Money.Ecto.Amount.Type
-    field :current_insurance_coverage, Money.Ecto.Amount.Type
-    field :request_credit_limit, Money.Ecto.Amount.Type
-    field :request_insurance_coverage, Money.Ecto.Amount.Type
-    field :amount, Money.Ecto.Amount.Type
+    field :current_credit_limit, Money.Ecto.Composite.Type
+    field :current_insurance_coverage, Money.Ecto.Composite.Type
+    field :request_credit_limit, Money.Ecto.Composite.Type
+    field :request_insurance_coverage, Money.Ecto.Composite.Type
+    field :amount, Money.Ecto.Composite.Type
     field :last_expirated_at, :utc_datetime
     field :dra, :integer
-    field :recommended_limit, Money.Ecto.Amount.Type
+    field :recommended_limit, Money.Ecto.Composite.Type
     field :credit_agency_rating, :string
     field :summary, :string
-    field :recommended_credit_limit, Money.Ecto.Amount.Type
+    field :recommended_credit_limit, Money.Ecto.Composite.Type
     field :payment_term, :decimal
-    field :credit_facilities, Money.Ecto.Amount.Type
-    field :availability_headroom, Money.Ecto.Amount.Type
+    field :credit_facilities, Money.Ecto.Composite.Type
+    field :availability_headroom, Money.Ecto.Composite.Type
     field :expirated_at, :utc_datetime
 
     field :current_coverage_type, Ecto.Enum, values: [:named, :dcl, :uninsured]
@@ -102,6 +103,8 @@ defmodule Vinmar.Summaries.ExecutiveSummary do
     belongs_to :customer, Customer,
       foreign_key: :customer_id,
       type: Ecto.UUID
+
+    has_one :review, Review
 
     timestamps()
   end

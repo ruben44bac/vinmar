@@ -1,4 +1,4 @@
-defmodule VinmarWeb.SelectComponent do
+defmodule VinmarWeb.TextareaComponent do
   @moduledoc false
 
   use Phoenix.LiveComponent
@@ -9,7 +9,8 @@ defmodule VinmarWeb.SelectComponent do
     ~H"""
     <div class="w-full relative mt-4">
       <label class="block font-bold text-sm text-slate-700"><%= @name %></label>
-      <select
+      <textarea
+        type={@type}
         name={@id}
         class={
           if @valid,
@@ -19,13 +20,7 @@ defmodule VinmarWeb.SelectComponent do
         required={@required}
         phx-change="input_changes"
         phx-target={@myself}
-      >
-        <%= for item <- @options do %>
-          <option value={item.id} selected={compare_selected(item.id, @form, @id)}>
-            <%= item.name %>
-          </option>
-        <% end %>
-      </select>
+      ><%= Map.get(@form, @id) %></textarea>
       <%= if !@valid do %>
         <label class="absolute bottom-0 left-0 text-red-700 text-xs font-semibold -mb-4">
           <%= @error_message %>
@@ -39,62 +34,44 @@ defmodule VinmarWeb.SelectComponent do
     {:ok,
      assign(socket,
        form: %{},
-       options: [],
+       type: "text",
        validations: [],
        required: false,
        name: "",
        valid: true,
        error_message: "",
-       changes: false,
        return: :updated_form
      )}
   end
 
   def update(attrs, socket) do
-    key = attrs[:id]
-
-    {valid, error_message} =
-      validate_input(attrs[:validations], Map.get(attrs[:form], key), socket.assigns.changes)
-
     {:ok,
      assign(socket,
        id: attrs[:id],
        form: attrs[:form],
-       options: attrs[:options],
+       type: attrs[:type],
        name: attrs[:name],
        validations: attrs[:validations],
        required: attrs[:required] || false,
-       valid: valid,
-       error_message: error_message,
        return: attrs[:return] || :updated_form
      )}
   end
 
   def handle_event("input_changes", %{"_target" => [target]} = params, socket) do
     value = Map.get(params, target)
+    {valid, error_message} = validate_input(socket.assigns.validations, value)
 
-    {valid, error_message} =
-      validate_input(socket.assigns.validations, value, socket.assigns.changes)
-
-    form = Map.put(socket.assigns.form, target, value)
+    form = Map.put(socket.assigns.form, socket.assigns.id, value)
 
     send(self(), {socket.assigns.return, %{form: form, valid: valid}})
 
-    {:noreply,
-     assign(socket, valid: valid, error_message: error_message, form: form, changes: true)}
+    {:noreply, assign(socket, valid: valid, error_message: error_message, form: form)}
   end
 
-  defp compare_selected(id, form, key) do
-    value = Map.get(form, key)
-    Kernel.==("#{id}", "#{value}")
-  end
+  defp validate_input([], _value), do: @validation_true
 
-  defp validate_input(_, _value, false), do: @validation_true
-
-  defp validate_input([], _value, _changes), do: @validation_true
-
-  defp validate_input([:required | _tail], value, _changes) do
-    if is_nil(value) || value == "" || value == "0" do
+  defp validate_input([:required | _tail], value) do
+    if is_nil(value) || value == "" do
       {false, "Required value"}
     else
       @validation_true

@@ -76,6 +76,8 @@ defmodule VinmarWeb.Router do
 
       live "/summary", SummaryLive.Index, :index
       live "/summary/form", SummaryLive.Form, :new
+      live "/summary/form/:id", SummaryLive.Form, :edit
+      live "/summary/form/:id/:step", SummaryLive.Form, :edit
 
       live "/local_currency", LocalCurrencyLive.Index, :index
       live "/local_currency/form", LocalCurrencyLive.Form, :new

@@ -72,64 +72,64 @@ defmodule Vinmar.LocalCurrencies.LocalCurrencyPeriod do
   ]
 
   typed_schema "local_currency_periods" do
-    field :balance_f_x, Money.Ecto.Amount.Type
+    field :balance_f_x, Money.Ecto.Composite.Type
     field :pl_f_x, :decimal
     field :period, :string
     field :statetment_a, :utc_datetime
     field :statetment_as_to, :utc_datetime
     field :no_months, :integer
     field :units, :decimal
-    field :cash, Money.Ecto.Amount.Type
-    field :accounts_receivable_net, Money.Ecto.Amount.Type
-    field :inventory, Money.Ecto.Amount.Type
-    field :affiliates_advances, Money.Ecto.Amount.Type
-    field :def_refundable_inc_tax, Money.Ecto.Amount.Type
-    field :other_current_assets, Money.Ecto.Amount.Type
-    field :prepaid, Money.Ecto.Amount.Type
-    field :machinery_equipment, Money.Ecto.Amount.Type
-    field :office_equipment, Money.Ecto.Amount.Type
-    field :other_fixed_assets, Money.Ecto.Amount.Type
-    field :transportation_equipment, Money.Ecto.Amount.Type
-    field :real_state_buildings, Money.Ecto.Amount.Type
-    field :less_accumulated_depr, Money.Ecto.Amount.Type
-    field :due_from_affiliates, Money.Ecto.Amount.Type
-    field :deferred_charges, Money.Ecto.Amount.Type
-    field :intangible_goodwill, Money.Ecto.Amount.Type
-    field :investment_others, Money.Ecto.Amount.Type
-    field :other_assets_1, Money.Ecto.Amount.Type
-    field :other_assets_2, Money.Ecto.Amount.Type
-    field :bank_overdraft, Money.Ecto.Amount.Type
-    field :accounts_payable, Money.Ecto.Amount.Type
-    field :bank_payable, Money.Ecto.Amount.Type
-    field :other_current_liab, Money.Ecto.Amount.Type
-    field :current_portion_ltd, Money.Ecto.Amount.Type
-    field :bank_long_term_debt, Money.Ecto.Amount.Type
-    field :other_lt_liabilities, Money.Ecto.Amount.Type
-    field :subordinated_debt, Money.Ecto.Amount.Type
-    field :common_stock, Money.Ecto.Amount.Type
-    field :other, Money.Ecto.Amount.Type
-    field :treasury_stock, Money.Ecto.Amount.Type
-    field :retained_earnings, Money.Ecto.Amount.Type
-    field :other_2, Money.Ecto.Amount.Type
-    field :dividens_other, Money.Ecto.Amount.Type
-    field :cash_flow_operation, Money.Ecto.Amount.Type
-    field :revenue, Money.Ecto.Amount.Type
-    field :less_return_allow, Money.Ecto.Amount.Type
-    field :cost_goods_sold, Money.Ecto.Amount.Type
-    field :cost_goods_other, Money.Ecto.Amount.Type
-    field :salaries_wages, Money.Ecto.Amount.Type
-    field :operating_experenses, Money.Ecto.Amount.Type
-    field :selling_expense, Money.Ecto.Amount.Type
-    field :other_selling_expense, Money.Ecto.Amount.Type
-    field :bad_debt_expense, Money.Ecto.Amount.Type
-    field :general_admin_exp, Money.Ecto.Amount.Type
-    field :depreciation_expense, Money.Ecto.Amount.Type
-    field :amortization_expense, Money.Ecto.Amount.Type
-    field :interest_expense, Money.Ecto.Amount.Type
-    field :non_recurring_expense, Money.Ecto.Amount.Type
-    field :interest_income, Money.Ecto.Amount.Type
-    field :other_income_expense, Money.Ecto.Amount.Type
-    field :taxes, Money.Ecto.Amount.Type
+    field :cash, Money.Ecto.Composite.Type
+    field :accounts_receivable_net, Money.Ecto.Composite.Type
+    field :inventory, Money.Ecto.Composite.Type
+    field :affiliates_advances, Money.Ecto.Composite.Type
+    field :def_refundable_inc_tax, Money.Ecto.Composite.Type
+    field :other_current_assets, Money.Ecto.Composite.Type
+    field :prepaid, Money.Ecto.Composite.Type
+    field :machinery_equipment, Money.Ecto.Composite.Type
+    field :office_equipment, Money.Ecto.Composite.Type
+    field :other_fixed_assets, Money.Ecto.Composite.Type
+    field :transportation_equipment, Money.Ecto.Composite.Type
+    field :real_state_buildings, Money.Ecto.Composite.Type
+    field :less_accumulated_depr, Money.Ecto.Composite.Type
+    field :due_from_affiliates, Money.Ecto.Composite.Type
+    field :deferred_charges, Money.Ecto.Composite.Type
+    field :intangible_goodwill, Money.Ecto.Composite.Type
+    field :investment_others, Money.Ecto.Composite.Type
+    field :other_assets_1, Money.Ecto.Composite.Type
+    field :other_assets_2, Money.Ecto.Composite.Type
+    field :bank_overdraft, Money.Ecto.Composite.Type
+    field :accounts_payable, Money.Ecto.Composite.Type
+    field :bank_payable, Money.Ecto.Composite.Type
+    field :other_current_liab, Money.Ecto.Composite.Type
+    field :current_portion_ltd, Money.Ecto.Composite.Type
+    field :bank_long_term_debt, Money.Ecto.Composite.Type
+    field :other_lt_liabilities, Money.Ecto.Composite.Type
+    field :subordinated_debt, Money.Ecto.Composite.Type
+    field :common_stock, Money.Ecto.Composite.Type
+    field :other, Money.Ecto.Composite.Type
+    field :treasury_stock, Money.Ecto.Composite.Type
+    field :retained_earnings, Money.Ecto.Composite.Type
+    field :other_2, Money.Ecto.Composite.Type
+    field :dividens_other, Money.Ecto.Composite.Type
+    field :cash_flow_operation, Money.Ecto.Composite.Type
+    field :revenue, Money.Ecto.Composite.Type
+    field :less_return_allow, Money.Ecto.Composite.Type
+    field :cost_goods_sold, Money.Ecto.Composite.Type
+    field :cost_goods_other, Money.Ecto.Composite.Type
+    field :salaries_wages, Money.Ecto.Composite.Type
+    field :operating_experenses, Money.Ecto.Composite.Type
+    field :selling_expense, Money.Ecto.Composite.Type
+    field :other_selling_expense, Money.Ecto.Composite.Type
+    field :bad_debt_expense, Money.Ecto.Composite.Type
+    field :general_admin_exp, Money.Ecto.Composite.Type
+    field :depreciation_expense, Money.Ecto.Composite.Type
+    field :amortization_expense, Money.Ecto.Composite.Type
+    field :interest_expense, Money.Ecto.Composite.Type
+    field :non_recurring_expense, Money.Ecto.Composite.Type
+    field :interest_income, Money.Ecto.Composite.Type
+    field :other_income_expense, Money.Ecto.Composite.Type
+    field :taxes, Money.Ecto.Composite.Type
 
     belongs_to :local_currency, LocalCurrency,
       foreign_key: :local_currency_id,

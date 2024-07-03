@@ -14,7 +14,12 @@ defmodule VinmarWeb.ProgressBarComponent do
           <li class="relative md:flex md:flex-1">
             <!-- Completed Step -->
             <%= if step.id < @current_step do %>
-              <button class="group flex w-full items-center">
+              <button
+                phx-click="select_step"
+                phx-value-step={step.id}
+                phx-target={@myself}
+                class="group flex w-full items-center"
+              >
                 <span class="flex items-center px-6 py-4 text-sm font-medium">
                   <span class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-green-600 group-hover:bg-green-800">
                     <svg
@@ -36,7 +41,9 @@ defmodule VinmarWeb.ProgressBarComponent do
             <% end %>
             <%= if step.id == @current_step do %>
               <button
-                href="#"
+                phx-click="select_step"
+                phx-value-step={step.id}
+                phx-target={@myself}
                 class="flex items-center px-6 py-4 text-sm font-medium"
                 aria-current="step"
               >
@@ -48,7 +55,12 @@ defmodule VinmarWeb.ProgressBarComponent do
             <% end %>
 
             <%= if step.id > @current_step do %>
-              <button class="group flex items-center">
+              <button
+                phx-click="select_step"
+                phx-value-step={step.id}
+                phx-target={@myself}
+                class="group flex items-center"
+              >
                 <span class="flex items-center px-6 py-4 text-sm font-medium">
                   <span class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border-2 border-gray-300 group-hover:border-gray-400">
                     <span class="text-gray-500 group-hover:text-gray-900"><%= step.id %></span>
@@ -89,5 +101,18 @@ defmodule VinmarWeb.ProgressBarComponent do
 
   def update(attrs, socket) do
     {:ok, assign(socket, steps: attrs.steps, current_step: attrs.current_step)}
+  end
+
+  def handle_event("select_step", %{"step" => step}, socket) do
+    step = String.to_integer(step)
+    full_current_step = Enum.find(socket.assigns.steps, &(&1.id == step))
+
+    if full_current_step.enable || socket.assigns.current_step > step do
+      send(self(), {:change_step, %{step: step}})
+
+      {:noreply, assign(socket, current_step: step)}
+    else
+      {:noreply, socket}
+    end
   end
 end

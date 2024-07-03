@@ -1,16 +1,17 @@
 <div class="lg:ml-64 min-h-screen py-3 px-3 lg:pr-3 block">
-    <.live_component module={VinmarWeb.BreadcrumbComponent} id="breadcrumbs" tree={@tree} />
-    <div class=" w-full mt-3">
-      <div class="col-span-12 bg-white rounded-lg p-8 border">
-        <div class="block text-xl font-bold text-slate-800"><%= @page_title %></div>
-        <div class="text-slate-600 font-medium block">
-          Credit recommendation - Executive summary
-        </div>
-        <div class="mt-4">
+  <.live_component module={VinmarWeb.BreadcrumbComponent} id="breadcrumbs" tree={@tree} />
+  <div class=" w-full mt-3">
+    <div class="col-span-12 bg-white rounded-lg p-8 border">
+      <div class="block text-xl font-bold text-slate-800"><%= @page_title %></div>
+      <div class="text-slate-600 font-medium block">
+        Credit recommendation - Executive summary
+      </div>
+      <div class="mt-4">
 
-          <.live_component module={VinmarWeb.ProgressBarComponent} id="progress_bar" steps={@steps} current_step={@current_step} />
-          
-        </div>
+        <.live_component module={VinmarWeb.ProgressBarComponent} id="progress_bar" steps={@steps} current_step={@current_step} />
+        
+      </div>
+      <%= if @current_step == 1 do %>
         <form phx-submit="submit_form">
           <div class="w-full grid grid-cols-1 lg:grid-cols-2 lg:gap-4 mt-1">
             <div class="w-full">
@@ -101,7 +102,7 @@
 
               <.live_component
                 module={VinmarWeb.SelectComponent}
-                id="request_insurance_company"
+                id="request_insurance_company_id"
                 name="Country of Customer"
                 options={@option_insurance_company}
                 form={@form}
@@ -138,7 +139,7 @@
               <.live_component
                 module={VinmarWeb.SelectComponent}
                 id="reviewed_period_id"
-                name="Country of Customer"
+                name="Review Period"
                 options={@option_reviewed_period}
                 form={@form}
                 validations={[:required]}
@@ -147,7 +148,7 @@
 
               <.live_component
                 module={VinmarWeb.SelectComponent}
-                id="request_insurance_company_id"
+                id="financial_statement_source_id"
                 name="Financial Statement Info from"
                 options={@option_financial_statement_source}
                 form={@form}
@@ -224,7 +225,261 @@
             </div>
           </div>
         </form>
-      </div>
+      <% end %>
+
+      <%= if @current_step == 2 do %>
+        <form phx-submit="submit_form">
+          <div class="w-full grid grid-cols-1 lg:grid-cols-2 lg:gap-4 mt-1">
+            <div class="w-full">
+
+              <div class="w-full pb-4 px-4 mt-4 grid grid-cols-1 lg:grid-cols-2 lg:gap-4 border-2 border-slate-200 rounded-lg relative">
+                <label class="absolute text-xs font-bold bg-white top-0 right-0 -mt-2 mr-4 text-slate-600">
+                  Coface Customized Credit Opinion (CCO)
+                </label>
+                <.live_component
+                  module={VinmarWeb.InputComponent}
+                  id="dra"
+                  name="DRA"
+                  form={@form}
+                  type="number"
+                  validations={[:required]}
+                  required={true}
+                />
+
+                <.live_component
+                  module={VinmarWeb.InputComponent}
+                  id="recommended_limit"
+                  name="Recommended Limit"
+                  form={@form}
+                  type="number"
+                  validations={[:required]}
+                  required={true}
+                />
+              </div>
+
+              <div class="w-full pb-4 px-4 mt-4 grid grid-cols-1 lg:grid-cols-2 lg:gap-4 border-2 border-slate-200 rounded-lg relative">
+                <label class="absolute text-xs font-bold bg-white top-0 right-0 -mt-2 mr-4 text-slate-600">
+                  Credit Agency Rating (Moody's/S&P/Fitch)
+                </label>
+                
+                <.live_component
+                  module={VinmarWeb.SelectComponent}
+                  id="credit_agency_rating"
+                  name="Financial Statement Info from"
+                  options={@option_credit_agency_rating}
+                  form={@form}
+                  validations={[:required]}
+                  required={true}
+                />
+
+                <.live_component
+                  module={VinmarWeb.SelectComponent}
+                  id="outlook"
+                  name="Outlook"
+                  options={@option_outlook}
+                  form={@form}
+                  validations={[:required]}
+                  required={true}
+                />
+
+                
+              </div>
+
+
+              <.live_component
+                  module={VinmarWeb.TextareaComponent}
+                  id="summary"
+                  name="Summary"
+                  form={@form}
+                  type="text"
+                  validations={[]}
+                  required={false}
+                />
+
+                <.live_component
+                  module={VinmarWeb.InputComponent}
+                  id="recommended_credit_limit"
+                  name="Recommended Credit Limit"
+                  form={@form}
+                  type="number"
+                  validations={[:required]}
+                  required={true}
+                />
+
+                <.live_component
+                  module={VinmarWeb.InputComponent}
+                  id="payment_term"
+                  name="Payment Terms: NT"
+                  form={@form}
+                  type="number"
+                  validations={[:required]}
+                  required={true}
+                />
+            </div>
+
+            <div class="w-full">
+              <div class="w-full pb-4 px-4 mt-4 grid grid-cols-1 lg:grid-cols-2 lg:gap-4 border-2 border-slate-200 rounded-lg relative">
+                <label class="absolute text-xs font-bold bg-white top-0 right-0 -mt-2 mr-4 text-slate-600">
+                  Credit Facilities
+                </label>
+
+                <.live_component
+                  module={VinmarWeb.InputComponent}
+                  id="credit_facilities"
+                  name="Credit Facilities/Revolver Size"
+                  form={@form}
+                  type="number"
+                  validations={[:required]}
+                  required={true}
+                />
+
+                <.live_component
+                  module={VinmarWeb.InputComponent}
+                  id="availability_headroom"
+                  name="Availability (Headroom)"
+                  form={@form}
+                  type="number"
+                  validations={[:required]}
+                  required={true}
+                />
+
+                <.live_component
+                  module={VinmarWeb.InputComponent}
+                  id="expirated_at"
+                  name="Expiration Date"
+                  form={@form}
+                  type="date"
+                  validations={[:required]}
+                  required={true}
+                />
+
+              </div>
+
+              <div class="w-full pb-4 px-4 mt-4 grid grid-cols-1 lg:grid-cols-2 lg:gap-4 border-2 border-slate-200 rounded-lg relative">
+                <label class="absolute text-xs font-bold bg-white top-0 right-0 -mt-2 mr-4 text-slate-600">
+                  Review Checklist
+                </label>
+
+                <.live_component
+                  module={VinmarWeb.CheckboxComponent}
+                  id="account_application"
+                  name="Account Application"
+                  form={@form}
+                  validations={[:required]}
+                  required={true}
+                />
+
+                <.live_component
+                  module={VinmarWeb.CheckboxComponent}
+                  id="credit_references"
+                  name="Credit References"
+                  form={@form}
+                  validations={[:required]}
+                  required={true}
+                />
+
+                <.live_component
+                  module={VinmarWeb.CheckboxComponent}
+                  id="credit_request_form"
+                  name="Credit Request Form"
+                  form={@form}
+                  validations={[:required]}
+                  required={true}
+                />
+
+                <.live_component
+                  module={VinmarWeb.CheckboxComponent}
+                  id="visual_compliance"
+                  name="Visual Compliance"
+                  form={@form}
+                  validations={[:required]}
+                  required={true}
+                />
+
+                <.live_component
+                  module={VinmarWeb.CheckboxComponent}
+                  id="financial_statements"
+                  name="Financial Statements"
+                  form={@form}
+                  validations={[:required]}
+                  required={true}
+                />
+
+
+                <.live_component
+                  module={VinmarWeb.CheckboxComponent}
+                  id="credit_reports"
+                  name="Credit Reports"
+                  form={@form}
+                  validations={[:required]}
+                  required={true}
+                />
+
+                <.live_component
+                  module={VinmarWeb.CheckboxComponent}
+                  id="insurance"
+                  name="Insurance"
+                  form={@form}
+                  validations={[:required]}
+                  required={true}
+                />
+              
+
+              </div>
+
+              <.live_component
+                module={VinmarWeb.TextareaComponent}
+                id="explanation"
+                name="Explanation if checklist not completed"
+                form={@form}
+                type="text"
+                validations={[]}
+                required={false}
+              />
+            </div>
+
+
+
+            <div class="lg:col-span-2">
+              <div class="w-full flex pt-6 lg:pt-0 lg:mt-3">
+                <div class="mx-auto relative">
+                  <div class="inline-flex items-center">
+                    <button
+                      type="button"
+                      class="mr-2 px-6 py-2 rounded-lg bg-slate-300 text-sm font-bold text-slate-700 hover:bg-slate-500 hover:text-slate-100"
+                    >
+                      Cancel
+                    </button>
+  
+                    <%= if @valid_form do %>
+                      <button
+                        type="submit"
+                        class="ml-2 px-8 py-2 rounded-lg bg-green-800 text-sm font-bold text-white hover:bg-green-300 hover:text-green-900"
+                      >
+                        Save
+                      </button>
+                    <% else %>
+                      <button
+                        type="submit"
+                        class="ml-2 px-8 py-2 rounded-lg bg-red-800 text-sm font-bold text-white hover:bg-red-300 hover:text-red-900"
+                      >
+                        Save
+                      </button>
+                    <% end %>
+                  </div>
+                  <%= if !@valid_form do %>
+                    <div class="block absolute top-0 left-0 mt-10">
+                      <label class="text-red-800 text-xs font-bold"><%= @error_message %></label>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      <% end %>
     </div>
   </div>
+</div>
   
+<.live_component module={VinmarWeb.LoadingComponent} id="loading" loading={@loading} />

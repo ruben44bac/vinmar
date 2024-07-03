@@ -2,13 +2,6 @@ defmodule Vinmar.Repo.Migrations.InitTables do
   use Ecto.Migration
 
   def change do
-    execute(
-      """
-      CREATE TYPE public.money_with_currency AS (amount integer, currency varchar(3))
-      """,
-      "DROP TYPE public.money_with_currency"
-    )
-
     create table(:countries, primary_key: false) do
       add :id, :uuid, primary_key: true, null: false, default: fragment("gen_random_uuid()")
       add :name, :string
@@ -26,7 +19,7 @@ defmodule Vinmar.Repo.Migrations.InitTables do
 
     create table(:customers, primary_key: false) do
       add :id, :uuid, primary_key: true, null: false, default: fragment("gen_random_uuid()")
-      add :sap_id, :integer
+      add :sap_id, :string
       add :name, :string
       add :created_at, :utc_datetime
       add :inception_at, :utc_datetime

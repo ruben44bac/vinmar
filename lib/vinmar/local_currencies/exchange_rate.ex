@@ -12,7 +12,7 @@ defmodule Vinmar.LocalCurrencies.ExchangeRate do
   @required_fields []
 
   typed_schema "exchange_rates" do
-    field :dollar_amount, Money.Ecto.Amount.Type
+    field :dollar_amount, Money.Ecto.Composite.Type
     field :day, :date
 
     belongs_to :currency_types, CurrencyType,

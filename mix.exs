@@ -63,7 +63,9 @@ defmodule Vinmar.MixProject do
       {:xlsx_reader, "~> 0.8.0"},
       {:carbonite, "~> 0.11.0"},
       {:typed_ecto_schema, "~> 0.4.1", runtime: false},
-      {:money, "~> 1.12"},
+      {:ex_cldr, "~> 2.0"},
+      {:ex_money, "~> 5.0"},
+      {:ex_money_sql, "~> 1.0"},
       {:timex, "~> 3.0"}
     ]
   end

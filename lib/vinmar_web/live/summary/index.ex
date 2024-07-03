@@ -22,7 +22,9 @@ defmodule VinmarWeb.SummaryLive.Index do
         :customer,
         :financial_statement_source,
         :current_insurance_company,
-        :insurance_company
+        :request_insurance_company,
+        :collateral_type,
+        :reviewed_period
       ])
 
     {:noreply,
