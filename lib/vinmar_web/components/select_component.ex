@@ -7,7 +7,7 @@ defmodule VinmarWeb.SelectComponent do
 
   def render(assigns) do
     ~H"""
-    <div class="w-full relative mt-4">
+    <div class="w-full relative">
       <label class="block font-bold text-sm text-slate-700"><%= @name %></label>
       <select
         name={@id}

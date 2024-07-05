@@ -95,5 +95,14 @@ defmodule VinmarWeb.BreadcrumbComponent do
   defp get_tree(:edit_summary),
     do: %{link: "#", name: "Edit Summary", key: :edit_summary}
 
+  defp get_tree(:local_currency_list),
+    do: %{link: "/local_currency", name: "Credit Analysis", key: :local_currency_list}
+
+  defp get_tree(:new_local_currency),
+    do: %{link: "/local_currency/form", name: "New Credit Analysis", key: :new_local_currency}
+
+  defp get_tree(:edit_local_currency),
+    do: %{link: "#", name: "Edit Credit Analysis", key: :edit_local_currency}
+
   defp get_tree(_atom), do: %{link: "/", name: "", key: :atom}
 end

@@ -4,13 +4,14 @@ defmodule Vinmar.LocalCurrencies.LocalCurrencyPeriod do
 
   import Ecto.Changeset
 
-  alias Vinmar.LocalCurrencies.{ExchangeRate, LocalCurrency}
+  alias Vinmar.LocalCurrencies.{ExchangeRate, LocalCurrency, FinancialStatementFormat}
   alias Vinmar.Accounts.User
 
   @timestamps_opts [type: :utc_datetime]
   @primary_key {:id, Ecto.UUID, autogenerate: true}
-  @optional_fields [:local_currency_id, :exchange_rate_id, :user_id]
-  @required_fields [
+  @optional_fields [
+    :local_currency_id,
+    :user_id,
     :balance_f_x,
     :pl_f_x,
     :period,
@@ -68,7 +69,20 @@ defmodule Vinmar.LocalCurrencies.LocalCurrencyPeriod do
     :non_recurring_expense,
     :interest_income,
     :other_income_expense,
-    :taxes
+    :taxes,
+    :other_current_assets_description,
+    :other_fixed_assets_description,
+    :other_assets_description,
+    :other_current_liabilities_description,
+    :other_lt_liabilities_description,
+    :other_description,
+    :other_cost_goods_description,
+    :other_income_description,
+    :other_before_taxes_description
+  ]
+  @required_fields [
+    :financial_statement_format_id,
+    :exchange_rate_id
   ]
 
   typed_schema "local_currency_periods" do
@@ -86,6 +100,16 @@ defmodule Vinmar.LocalCurrencies.LocalCurrencyPeriod do
     field :def_refundable_inc_tax, Money.Ecto.Composite.Type
     field :other_current_assets, Money.Ecto.Composite.Type
     field :prepaid, Money.Ecto.Composite.Type
+    field :other_current_assets_description, :string
+    field :other_fixed_assets_description, :string
+    field :other_assets_description, :string
+    field :other_current_liabilities_description, :string
+    field :other_lt_liabilities_description, :string
+    field :other_description, :string
+    field :other_cost_goods_description, :string
+    field :other_income_description, :string
+    field :other_before_taxes_description, :string
+
     field :machinery_equipment, Money.Ecto.Composite.Type
     field :office_equipment, Money.Ecto.Composite.Type
     field :other_fixed_assets, Money.Ecto.Composite.Type
@@ -130,6 +154,10 @@ defmodule Vinmar.LocalCurrencies.LocalCurrencyPeriod do
     field :interest_income, Money.Ecto.Composite.Type
     field :other_income_expense, Money.Ecto.Composite.Type
     field :taxes, Money.Ecto.Composite.Type
+
+    belongs_to :financial_statement_format, FinancialStatementFormat,
+      foreign_key: :financial_statement_format_id,
+      type: Ecto.UUID
 
     belongs_to :local_currency, LocalCurrency,
       foreign_key: :local_currency_id,

@@ -7,7 +7,7 @@ defmodule VinmarWeb.CheckboxComponent do
 
   def render(assigns) do
     ~H"""
-    <div class="w-full flex items-center mt-4">
+    <div class="w-full flex items-center">
       <button
         type="button"
         phx-click="input_changes"

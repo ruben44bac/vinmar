@@ -7,18 +7,13 @@ defmodule Vinmar.LocalCurrencies.LocalCurrency do
   alias Vinmar.Accounts.User
   alias Vinmar.Customers.Customer
   alias Vinmar.LocalCurrencies.CurrencyType
-  alias Vinmar.Summaries.FinancialStatementSource
 
   @timestamps_opts [type: :utc_datetime]
   @primary_key {:id, Ecto.UUID, autogenerate: true}
-  @optional_fields [:user_id, :customer_id, :currency_type_id]
-  @required_fields [:financial_statement_format_id]
+  @optional_fields [:user_id, :currency_type_id]
+  @required_fields [:customer_id]
 
   typed_schema "local_currencies" do
-    belongs_to :financial_statement_format, FinancialStatementSource,
-      foreign_key: :financial_statement_format_id,
-      type: Ecto.UUID
-
     belongs_to :currency_type, CurrencyType,
       foreign_key: :currency_type_id,
       type: Ecto.UUID

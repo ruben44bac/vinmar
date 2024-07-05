@@ -1,4 +1,4 @@
-defmodule Vinmar.LocalCurrencies.CurrencyType do
+defmodule Vinmar.LocalCurrencies.FinancialStatementFormat do
   @moduledoc false
   use TypedEctoSchema
 
@@ -6,12 +6,11 @@ defmodule Vinmar.LocalCurrencies.CurrencyType do
 
   @timestamps_opts [type: :utc_datetime]
   @primary_key {:id, Ecto.UUID, autogenerate: true}
-  @optional_fields []
-  @required_fields [:money_name, :money_key]
+  @optional_fields [:name]
+  @required_fields []
 
-  typed_schema "currency_types" do
-    field :money_name, :string
-    field :money_key, :string
+  typed_schema "financial_statement_formats" do
+    field :name, :string
 
     timestamps()
   end

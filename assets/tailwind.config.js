@@ -15,6 +15,15 @@ module.exports = {
     extend: {
       colors: {
         brand: "#FD4F00",
+      },
+      keyframes: {
+        moveRight: {
+          '0%': { transform: 'translateX(100%)' },
+          '100%': { transform: 'translateX(0%)' },
+        },
+      },
+      animation: {
+        moveRight: 'moveRight 0.2s linear',
       }
     },
   },

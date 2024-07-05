@@ -9,7 +9,7 @@ defmodule VinmarWeb.CustomerSearchComponent do
 
   def render(assigns) do
     ~H"""
-    <div class="w-full relative mt-4">
+    <div class="w-full relative">
       <%= if is_nil(@customer) do %>
         <label class="block font-bold text-sm text-slate-700"><%= @name %></label>
         <input
@@ -46,7 +46,7 @@ defmodule VinmarWeb.CustomerSearchComponent do
           </label>
         <% end %>
       <% else %>
-        <div class="w-full rounded-lg border-2 border-slate-200 p-3 font-semibold bg-slate-100 text-slate-800 relative">
+        <div class="w-full inline-flex items-center rounded-lg border-2 border-slate-200 p-3 font-semibold bg-slate-100 text-slate-800 relative">
           <button
             type="button"
             phx-click="change_customer"
@@ -62,28 +62,32 @@ defmodule VinmarWeb.CustomerSearchComponent do
               <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
             </svg>
           </button>
-
-          <div class="inline-flex items-center w-full">
-            <div class="mx-auto w-12 h-12 rounded-full bg-slate-800 text-slate-50 inline-flex items-center">
-              <span class="mx-auto text-2xl font-bold"><%= @customer.country.rating %></span>
+          <div>
+            <div class="inline-flex items-center w-full">
+              <div class="mx-auto w-12 h-12 rounded-full bg-slate-800 text-slate-50 inline-flex items-center">
+                <span class="mx-auto text-2xl font-bold"><%= @customer.country.rating %></span>
+              </div>
+            </div>
+            <div class="inline-flex items-center w-full mt-4">
+              <label class={
+                if @customer.country.insurance_coverage == "MARKEL",
+                  do:
+                    "mx-auto px-3 py-1 rounded-full text-xs font-bold text-green-800 bg-green-100 border border-green-300",
+                  else:
+                    "mx-auto px-3 py-1 rounded-full text-xs font-bold text-red-800 bg-red-100 border border-red-300"
+              }>
+                <%= @customer.country.insurance_coverage %>
+              </label>
             </div>
           </div>
-          <div class="inline-flex items-center w-full mt-4">
-            <label class={
-              if @customer.country.insurance_coverage == "MARKEL",
-                do:
-                  "mx-auto px-3 py-1 rounded-full text-xs font-bold text-green-800 bg-green-100 border border-green-300",
-                else:
-                  "mx-auto px-3 py-1 rounded-full text-xs font-bold text-red-800 bg-red-100 border border-red-300"
-            }>
-              <%= @customer.country.insurance_coverage %>
+          <div>
+            <label class="block "><%= @customer.name %></label>
+            <label class="block font-bold text-sm">SAP: <%= @customer.sap_id %></label>
+            <label class="block text-xs text-slate-600"><%= @customer.country.name %></label>
+            <label class="block text-xs text-slate-600">
+              Type: <%= @customer.customer_type.name %>
             </label>
           </div>
-
-          <label class="block text-center mt-2"><%= @customer.name %></label>
-          <label class="block text-center font-bold text-sm"><%= @customer.sap_id %></label>
-          <label class="block text-center text-sm"><%= @customer.country.name %></label>
-          <label class="block text-center text-sm"><%= @customer.customer_type.name %></label>
         </div>
       <% end %>
     </div>
