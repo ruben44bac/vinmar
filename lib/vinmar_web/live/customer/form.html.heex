@@ -7,8 +7,8 @@
         Enter the data related to the client. If you have questions about how to enter the data, use the information button next to each section.
       </div>
       <form phx-submit="submit_form">
-        <div class="w-full grid grid-cols-1 lg:grid-cols-2 lg:gap-4 mt-1">
-          <div class="w-full">
+        <div class="w-full grid grid-cols-1 lg:grid-cols-2 lg:gap-4 mt-4">
+          <div class="w-full grid grid-cols-1 gap-4">
             <.live_component
               module={VinmarWeb.InputComponent}
               id="sap_id"
@@ -40,7 +40,7 @@
             />
           </div>
 
-          <div class="w-full">
+          <div class="w-full grid grid-cols-1 gap-4">
             <.live_component
               module={VinmarWeb.InputComponent}
               id="created_at"

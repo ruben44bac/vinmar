@@ -81,13 +81,14 @@ defmodule VinmarWeb.Router do
 
       live "/local_currency", LocalCurrencyLive.Index, :index
       live "/local_currency/form", LocalCurrencyLive.Form, :new
+      live "/local_currency/form/:id", LocalCurrencyLive.Form, :edit
     end
   end
 
   scope "/", VinmarWeb do
     pipe_through [:browser]
 
-    delete "/users/log_out", UserSessionController, :delete
+    get "/users/log_out", UserSessionController, :delete
 
     live_session :current_user,
       on_mount: [{VinmarWeb.UserAuth, :mount_current_user}] do

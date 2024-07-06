@@ -6,7 +6,11 @@ defmodule Vinmar.LocalCurrencies.LocalCurrency do
 
   alias Vinmar.Accounts.User
   alias Vinmar.Customers.Customer
-  alias Vinmar.LocalCurrencies.CurrencyType
+
+  alias Vinmar.LocalCurrencies.{
+    CurrencyType,
+    LocalCurrencyPeriod
+  }
 
   @timestamps_opts [type: :utc_datetime]
   @primary_key {:id, Ecto.UUID, autogenerate: true}
@@ -25,6 +29,8 @@ defmodule Vinmar.LocalCurrencies.LocalCurrency do
     belongs_to :user, User,
       foreign_key: :user_id,
       type: Ecto.UUID
+
+    has_one :local_currency_period, LocalCurrencyPeriod
 
     timestamps()
   end

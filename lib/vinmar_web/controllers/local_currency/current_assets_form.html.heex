@@ -1,0 +1,132 @@
+<form class="w-full">
+  <div class="inline-flex items-center w-full">
+    <label class="block text-slate-500 font-semibold">Current Assets</label>
+    <%= if !is_nil(@currency_type) do %>
+      <div class="ml-auto">
+        <label class="text-slate-600 font-bold text-xs block pl-2">Currency</label>
+        <div class="px-4 py-1 rounded-full bg-sky-100 text-sky-800 font-bold text-sm">
+          <%= String.replace(@currency_type.money_name, "_", " ") %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4 mt-4">
+    <.live_component
+      module={VinmarWeb.InputComponent}
+      id="cash"
+      name="Cash"
+      form={@form}
+      type="number"
+      validations={[]}
+      required={true}
+    />
+
+    <.live_component
+      module={VinmarWeb.InputComponent}
+      id="accounts_receivable_net"
+      name="Accounts Receivable, net"
+      form={@form}
+      type="number"
+      validations={[]}
+      required={true}
+    />
+
+    <.live_component
+      module={VinmarWeb.InputComponent}
+      id="inventory"
+      name="Inventory"
+      form={@form}
+      type="number"
+      validations={[]}
+      required={true}
+    />
+
+    <.live_component
+      module={VinmarWeb.InputComponent}
+      id="affiliates_advances"
+      name="Advances to Affiliates"
+      form={@form}
+      type="number"
+      validations={[]}
+      required={true}
+    />
+
+    <.live_component
+      module={VinmarWeb.InputComponent}
+      id="def_refundable_inc_tax"
+      name="Def & Refundable Inc Tax"
+      form={@form}
+      type="number"
+      validations={[]}
+      required={true}
+    />
+
+    <.live_component
+      module={VinmarWeb.InputComponent}
+      id="prepaid"
+      name="Prepaid"
+      form={@form}
+      type="number"
+      validations={[]}
+      required={true}
+    />
+
+    <.live_component
+      module={VinmarWeb.InputComponent}
+      id="other_current_assets"
+      name="Other Current Assets"
+      form={@form}
+      type="number"
+      validations={[]}
+      required={true}
+    />
+
+    <div class="col-span-2">
+      <.live_component
+        module={VinmarWeb.TextareaComponent}
+        id="other_current_assets_description"
+        name="Describe Other Current Assets"
+        form={@form}
+        type="text"
+        validations={[]}
+        required={false}
+      />
+    </div>
+  </div>
+
+  <div class="w-full flex pt-6 lg:pt-0 mt-8 lg:mt-16">
+    <div class="mx-auto relative">
+      <div class="inline-flex items-center">
+        <button
+          type="button"
+          phx-click="modal_form_close"
+          class="mr-2 px-6 py-2 rounded-lg bg-slate-300 text-sm font-bold text-slate-700 hover:bg-slate-500 hover:text-slate-100"
+        >
+          Cancel
+        </button>
+
+        <%= if @valid_form do %>
+          <button
+            type="submit"
+            class="ml-2 px-8 py-2 rounded-lg bg-green-800 text-sm font-bold text-white hover:bg-green-300 hover:text-green-900"
+          >
+            Save
+          </button>
+        <% else %>
+          <button
+            type="submit"
+            class="ml-2 px-8 py-2 rounded-lg bg-red-800 text-sm font-bold text-white hover:bg-red-300 hover:text-red-900"
+          >
+            Save
+          </button>
+        <% end %>
+      </div>
+      <%= if !@valid_form do %>
+        <div class="block absolute top-0 left-0 mt-10">
+          <label class="text-red-800 text-xs font-bold"><%= @error_message %></label>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</form>

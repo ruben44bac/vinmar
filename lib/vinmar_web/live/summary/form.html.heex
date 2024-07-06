@@ -13,7 +13,7 @@
       </div>
       <%= if @current_step == 1 do %>
         <form phx-submit="submit_form">
-          <div class="w-full grid grid-cols-1 lg:grid-cols-2 lg:gap-4 mt-1">
+          <div class="w-full grid grid-cols-1 lg:grid-cols-2 lg:gap-4 mt-6">
             <div class="w-full">
 
 
@@ -27,7 +27,7 @@
               customer={@customer}
             />
 
-            <div class="w-full pb-4 px-4 mt-4 grid grid-cols-1 lg:grid-cols-2 lg:gap-4 border-2 border-slate-200 rounded-lg relative">
+            <div class="w-full pb-4 px-4 mt-4 grid grid-cols-1 lg:grid-cols-2 lg:gap-4 border-2 border-slate-200 rounded-lg relative pt-4">
               <label class="absolute text-xs font-bold bg-white top-0 right-0 -mt-2 mr-4 text-slate-600">Current Limit</label>
               <.live_component
                 module={VinmarWeb.InputComponent}
@@ -69,7 +69,7 @@
               />
             </div>
 
-            <div class="w-full pb-4 px-4 mt-4 grid grid-cols-1 lg:grid-cols-2 lg:gap-4 border-2 border-slate-200 rounded-lg relative">
+            <div class="w-full pb-4 px-4 mt-4 grid grid-cols-1 lg:grid-cols-2 lg:gap-4 border-2 border-slate-200 rounded-lg relative pt-4">
               <label class="absolute text-xs font-bold bg-white top-0 right-0 -mt-2 mr-4 text-slate-600">Requested Limit</label>
               <.live_component
                 module={VinmarWeb.InputComponent}
@@ -114,7 +114,7 @@
 
             </div>
 
-            <div class="w-full">
+            <div class="grid grid-cols-1 gap-4">
 
               <.live_component
                 module={VinmarWeb.InputComponent}
@@ -230,9 +230,9 @@
       <%= if @current_step == 2 do %>
         <form phx-submit="submit_form">
           <div class="w-full grid grid-cols-1 lg:grid-cols-2 lg:gap-4 mt-1">
-            <div class="w-full">
+            <div class="w-full grid grid-cols-1 gap-4">
 
-              <div class="w-full pb-4 px-4 mt-4 grid grid-cols-1 lg:grid-cols-2 lg:gap-4 border-2 border-slate-200 rounded-lg relative">
+              <div class="w-full pb-4 px-4 mt-4 grid grid-cols-1 lg:grid-cols-2 lg:gap-4 border-2 border-slate-200 rounded-lg relative pt-4">
                 <label class="absolute text-xs font-bold bg-white top-0 right-0 -mt-2 mr-4 text-slate-600">
                   Coface Customized Credit Opinion (CCO)
                 </label>
@@ -257,7 +257,7 @@
                 />
               </div>
 
-              <div class="w-full pb-4 px-4 mt-4 grid grid-cols-1 lg:grid-cols-2 lg:gap-4 border-2 border-slate-200 rounded-lg relative">
+              <div class="w-full pb-4 px-4 mt-4 grid grid-cols-1 lg:grid-cols-2 lg:gap-4 border-2 border-slate-200 rounded-lg relative pt-4">
                 <label class="absolute text-xs font-bold bg-white top-0 right-0 -mt-2 mr-4 text-slate-600">
                   Credit Agency Rating (Moody's/S&P/Fitch)
                 </label>
@@ -317,8 +317,8 @@
                 />
             </div>
 
-            <div class="w-full">
-              <div class="w-full pb-4 px-4 mt-4 grid grid-cols-1 lg:grid-cols-2 lg:gap-4 border-2 border-slate-200 rounded-lg relative">
+            <div class="w-full grid grid-cols-1 gap-4">
+              <div class="w-full pb-4 px-4 mt-4 grid grid-cols-1 lg:grid-cols-2 lg:gap-4 border-2 border-slate-200 rounded-lg relative pt-4">
                 <label class="absolute text-xs font-bold bg-white top-0 right-0 -mt-2 mr-4 text-slate-600">
                   Credit Facilities
                 </label>
@@ -355,7 +355,7 @@
 
               </div>
 
-              <div class="w-full pb-4 px-4 mt-4 grid grid-cols-1 lg:grid-cols-2 lg:gap-4 border-2 border-slate-200 rounded-lg relative">
+              <div class="w-full pb-4 px-4 mt-4 grid grid-cols-1 lg:grid-cols-2 lg:gap-4 border-2 border-slate-200 rounded-lg relative pt-4">
                 <label class="absolute text-xs font-bold bg-white top-0 right-0 -mt-2 mr-4 text-slate-600">
                   Review Checklist
                 </label>

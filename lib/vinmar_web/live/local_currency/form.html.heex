@@ -2,10 +2,38 @@
   <.live_component module={VinmarWeb.BreadcrumbComponent} id="breadcrumbs" tree={@tree} />
   <div class=" w-full mt-3">
     <div class="w-full p-2">
-      <div class="block text-xl font-bold text-slate-800"><%= @page_title %></div>
-      <div class="text-slate-600 font-medium block">
-        Credit recommendation - Executive summary
+      
+      <div class="inline-flex items-center w-full">
+        <div>
+          <div class="block text-xl font-bold text-slate-800"><%= @page_title %></div>
+          <div class="text-slate-600 font-medium block">
+            Credit recommendation - Executive summary
+          </div>
+        </div>
+
+        <div class="ml-auto">
+          <%= if is_nil(@form["currency_type_id"]) || is_nil(@form["balance_f_x"]) || @form["balance_f_x"] == "" || @form["currency_type_id"] == "0" do %>
+            <div class="w-full rounded-lg bg-red-100 text-red-900 px-4 py-2">
+              <label class="font-bold text-sm">Pending USD to Currency</label>
+            </div>
+          <% else %>
+            <div class="w-64 rounded-lg bg-sky-100 shadow-lg px-4 py-2 inline-flex items-center">
+              <div class="text-center w-5/12">
+                <label class="text-xs block font-bold text-sky-700">USD</label>
+                <label class="text-base block font-bold text-sky-900"><%= Money.new(:USD, "1") %></label>
+              </div>
+              <div class="w-2/12">
+              <span class="font-bold text-3xl text-sky-400">=</span>
+              </div>
+              <div class="text-center w-5/12">
+                <label class="text-xs block font-bold text-sky-700"><%= get_currency(@form["currency_type_id"], @currency_types) %></label>
+                <label class="text-base block font-bold text-sky-900"><%= calculate_exchange(@form, @currency_types) %></label>
+              </div>
+            </div>
+          <% end %>
+        </div>
       </div>
+
     </div>
     
     <form phx-submit="submit_form">
@@ -39,7 +67,7 @@
 
         <div class="col-span-3 bg-white rounded-lg p-4 border">
           <label class="block text-slate-500 font-semibold">Financial Statement</label>
-          <div class="w-full mt-4 grid grid-cols-1 lg:grid-cols-4 lg:gap-4">
+          <div class="w-full mt-4 grid grid-cols-1 lg:grid-cols-3 lg:gap-4">
 
             <.live_component
               module={VinmarWeb.SelectComponent}
@@ -63,7 +91,7 @@
 
             <.live_component
               module={VinmarWeb.InputComponent}
-              id="current_credit_limit"
+              id="balance_f_x"
               name="Exchange Rate to USD"
               form={@form}
               type="number"
@@ -71,26 +99,7 @@
               required={true}
             />
 
-            <div>
-              <%= if is_nil(@form["currency_type_id"]) || is_nil(@form["current_credit_limit"]) || @form["current_credit_limit"] == "" || @form["currency_type_id"] == "0" do %>
-                <label class="text-sm text-red-700">Select <span class="font-bold">Currency</span> and <span class="font-bold">Exchange Rate to USD</span> to calculate the USD to Currency</label>
-              <% else %>
-                <div class="w-full rounded-lg bg-slate-100 p-2 inline-flex items-center">
-                  <div class="text-center w-5/12">
-                    <label class="text-xs block font-bold text-slate-600">USD</label>
-                    <label class="text-base block font-medium text-slate-700"><%= Money.new(:USD, "1") %></label>
-                  </div>
-                  <div class="w-2/12">
-                    =
-                  </div>
-                  <div class="text-center w-5/12">
-                    <label class="text-xs block font-bold text-slate-600"><%= get_currency(@form["currency_type_id"], @currency_types) %></label>
-                    <label class="text-base block font-medium text-slate-700"><%= calculate_exchange(@form, @currency_types) %></label>
-                  </div>
-                </div>
-              <% end %>
-            </div>
-
+            
             <.live_component
               module={VinmarWeb.SelectComponent}
               id="period"
@@ -126,8 +135,44 @@
 
       </div>
 
+      <%= if is_nil(@local_currency) do %>
+        <div class="w-full flex pt-6 lg:pt-0 lg:my-10">
+          <div class="mx-auto relative">
+            <div class="inline-flex items-center">
+              <button
+                type="button"
+                class="mr-2 px-6 py-2 rounded-lg bg-slate-300 text-sm font-bold text-slate-700 hover:bg-slate-500 hover:text-slate-100"
+              >
+                Cancel
+              </button>
+
+              <%= if !is_nil(@customer) && !is_nil(@currency_type) do %>
+                <button
+                  type="submit"
+                  class="ml-2 px-8 py-2 rounded-lg bg-green-800 text-sm font-bold text-white hover:bg-green-300 hover:text-green-900"
+                >
+                  Continue
+                </button>
+              <% else %>
+                <button
+                  type="submit"
+                  class="ml-2 px-8 py-2 rounded-lg bg-red-800 text-sm font-bold text-white hover:bg-red-300 hover:text-red-900"
+                >
+                  Continue
+                </button>
+              <% end %>
+            </div>
+            <%= if !@valid_form do %>
+              <div class="block absolute top-0 left-0 mt-10 bg-red-100 shadow-lg rounded-lg z-20 p-2 ">
+                <label class="text-red-800 text-xs font-bold"><%= @error_message %></label>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
       <div class="grid grid-cols-1 lg:grid-cols-3 lg:gap-4 mt-4 relative">
-        <%= if is_nil(@customer) || is_nil(@currency_type) do %>
+        <%= if is_nil(@local_currency) do %>
           <div class="absolute inline-flex items-center top-0 left-0 w-full backdrop-blur-sm bg-white/20 h-full rounded-lg z-10">
             <div class="mx-auto">
               <div class="flex">
@@ -155,7 +200,13 @@
                 <div class="w-full p-2 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
                   <div>
                     <label class="block font-bold text-slate-600 text-sm">Current Assets</label>
-                    <label class="block font-medium text-slate-800 text-base">$3,005.00</label>
+                    <label class="block font-medium text-slate-800 text-base">
+                      <%= 
+                        if is_nil(@local_currency) || is_nil(@local_currency.local_currency_period.current_assets_total), 
+                        do: "-", 
+                        else: @local_currency.local_currency_period.current_assets_total  
+                      %>
+                    </label>
                   </div>
                   <div class="ml-auto">
                     <button type="button" phx-click="modal_form_open" phx-value-type="current_assets" class="px-6 py-1 text-sm font-bold rounded-lg bg-green-800 text-white">
@@ -168,10 +219,16 @@
                 <div class="w-full p-2 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
                   <div>
                     <label class="block font-bold text-slate-600 text-sm">Fixed Assets</label>
-                    <label class="block font-medium text-slate-800 text-base">$3,005.00</label>
+                    <label class="block font-medium text-slate-800 text-base">
+                      <%= 
+                        if is_nil(@local_currency) || is_nil(@local_currency.local_currency_period.current_assets_total), 
+                        do: "-", 
+                        else: @local_currency.local_currency_period.fixed_assets_total  
+                      %>
+                    </label>
                   </div>
                   <div class="ml-auto">
-                    <button type="button" phx-click="modal_form_open" phx-value-type="current_assets" class="px-6 py-1 text-sm font-bold rounded-lg bg-green-800 text-white">
+                    <button type="button" phx-click="modal_form_open" phx-value-type="fixed_assets" class="px-6 py-1 text-sm font-bold rounded-lg bg-green-800 text-white">
                       Editar
                     </button>
                   </div>
@@ -181,10 +238,16 @@
                 <div class="w-full p-2 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
                   <div>
                     <label class="block font-bold text-slate-600 text-sm">Other Assets</label>
-                    <label class="block font-medium text-slate-800 text-base">$3,005.00</label>
+                    <label class="block font-medium text-slate-800 text-base">
+                      <%= 
+                        if is_nil(@local_currency) || is_nil(@local_currency.local_currency_period.current_assets_total), 
+                        do: "-", 
+                        else: @local_currency.local_currency_period.other_assets_total  
+                      %>
+                    </label>
                   </div>
                   <div class="ml-auto">
-                    <button type="button" phx-click="modal_form_open" phx-value-type="current_assets" class="px-6 py-1 text-sm font-bold rounded-lg bg-green-800 text-white">
+                    <button type="button" phx-click="modal_form_open" phx-value-type="other_assets" class="px-6 py-1 text-sm font-bold rounded-lg bg-green-800 text-white">
                       Editar
                     </button>
                   </div>
@@ -196,7 +259,9 @@
                 <div class="w-full p-2 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
                   <div>
                     <label class="block font-bold text-slate-600 text-sm">Total Assets</label>
-                    <label class="block font-medium text-slate-800 text-2xl">$3,005.00</label>
+                    <label class="block font-medium text-slate-800 text-2xl">
+                      <%= sum_totals(@local_currency, @currency_type, [:current_assets_total, :fixed_assets_total, :other_assets_total]) %>
+                    </label>
                   </div>
                   
                 </div>
@@ -211,10 +276,16 @@
                 <div class="w-full p-2 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
                   <div>
                     <label class="block font-bold text-slate-600 text-sm">Current Liabilities</label>
-                    <label class="block font-medium text-slate-800 text-base">$3,005.00</label>
+                    <label class="block font-medium text-slate-800 text-base">
+                      <%= 
+                        if is_nil(@local_currency) || is_nil(@local_currency.local_currency_period.current_assets_total), 
+                        do: "-", 
+                        else: @local_currency.local_currency_period.current_liabilities_total  
+                      %>
+                    </label>
                   </div>
                   <div class="ml-auto">
-                    <button type="button" phx-click="modal_form_open" phx-value-type="current_assets" class="px-6 py-1 text-sm font-bold rounded-lg bg-green-800 text-white">
+                    <button type="button" phx-click="modal_form_open" phx-value-type="current_liabilities" class="px-6 py-1 text-sm font-bold rounded-lg bg-green-800 text-white">
                       Editar
                     </button>
                   </div>
@@ -224,10 +295,16 @@
                 <div class="w-full p-2 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
                   <div>
                     <label class="block font-bold text-slate-600 text-sm">Long Term Debt</label>
-                    <label class="block font-medium text-slate-800 text-base">$3,005.00</label>
+                    <label class="block font-medium text-slate-800 text-base">
+                      <%= 
+                        if is_nil(@local_currency) || is_nil(@local_currency.local_currency_period.current_assets_total), 
+                        do: "-", 
+                        else: @local_currency.local_currency_period.long_term_debt_total  
+                      %>
+                    </label>
                   </div>
                   <div class="ml-auto">
-                    <button type="button" phx-click="modal_form_open" phx-value-type="current_assets" class="px-6 py-1 text-sm font-bold rounded-lg bg-green-800 text-white">
+                    <button type="button" phx-click="modal_form_open" phx-value-type="long_term_debt" class="px-6 py-1 text-sm font-bold rounded-lg bg-green-800 text-white">
                       Editar
                     </button>
                   </div>
@@ -237,10 +314,16 @@
                 <div class="w-full p-2 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
                   <div>
                     <label class="block font-bold text-slate-600 text-sm">Stockholder Equity</label>
-                    <label class="block font-medium text-slate-800 text-base">$3,005.00</label>
+                    <label class="block font-medium text-slate-800 text-base">
+                      <%= 
+                        if is_nil(@local_currency) || is_nil(@local_currency.local_currency_period.current_assets_total), 
+                        do: "-", 
+                        else: @local_currency.local_currency_period.stockholder_equity_total  
+                      %>
+                    </label>
                   </div>
                   <div class="ml-auto">
-                    <button type="button" phx-click="modal_form_open" phx-value-type="current_assets" class="px-6 py-1 text-sm font-bold rounded-lg bg-green-800 text-white">
+                    <button type="button" phx-click="modal_form_open" phx-value-type="stockholder_equity" class="px-6 py-1 text-sm font-bold rounded-lg bg-green-800 text-white">
                       Editar
                     </button>
                   </div>
@@ -252,7 +335,9 @@
                 <div class="w-full p-2 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
                   <div>
                     <label class="block font-bold text-slate-600 text-sm">Total Liability and Equity</label>
-                    <label class="block font-medium text-slate-800 text-2xl">$3,005.00</label>
+                    <label class="block font-medium text-slate-800 text-2xl">
+                      <%= sum_totals(@local_currency, @currency_type, [:current_liabilities_total, :long_term_debt_total, :stockholder_equity_total]) %>
+                    </label>
                   </div>
                   
                 </div>
@@ -275,10 +360,16 @@
               <div class="w-full p-2 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
                 <div>
                   <label class="block font-bold text-slate-600 text-sm">Gross Margin</label>
-                  <label class="block font-medium text-slate-800 text-base">$3,005.00</label>
+                  <label class="block font-medium text-slate-800 text-base">
+                    <%= 
+                      if is_nil(@local_currency) || is_nil(@local_currency.local_currency_period.current_assets_total), 
+                      do: "-", 
+                      else: @local_currency.local_currency_period.gross_margin_total  
+                    %>
+                  </label>
                 </div>
                 <div class="ml-auto">
-                  <button type="button" phx-click="modal_form_open" phx-value-type="current_assets" class="px-6 py-1 text-sm font-bold rounded-lg bg-green-800 text-white">
+                  <button type="button" phx-click="modal_form_open" phx-value-type="gross_margin" class="px-6 py-1 text-sm font-bold rounded-lg bg-green-800 text-white">
                     Editar
                   </button>
                 </div>
@@ -288,10 +379,16 @@
               <div class="w-full p-2 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
                 <div>
                   <label class="block font-bold text-slate-600 text-sm">Operating Income</label>
-                  <label class="block font-medium text-slate-800 text-base">$3,005.00</label>
+                  <label class="block font-medium text-slate-800 text-base">
+                    <%= 
+                      if is_nil(@local_currency) || is_nil(@local_currency.local_currency_period.current_assets_total), 
+                      do: "-", 
+                      else: @local_currency.local_currency_period.operating_income_total  
+                    %>
+                  </label>
                 </div>
                 <div class="ml-auto">
-                  <button type="button" phx-click="modal_form_open" phx-value-type="current_assets" class="px-6 py-1 text-sm font-bold rounded-lg bg-green-800 text-white">
+                  <button type="button" phx-click="modal_form_open" phx-value-type="operating_income" class="px-6 py-1 text-sm font-bold rounded-lg bg-green-800 text-white">
                     Editar
                   </button>
                 </div>
@@ -301,10 +398,16 @@
               <div class="w-full p-2 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
                 <div>
                   <label class="block font-bold text-slate-600 text-sm">Net Income Before Taxes</label>
-                  <label class="block font-medium text-slate-800 text-base">$3,005.00</label>
+                  <label class="block font-medium text-slate-800 text-base">
+                    <%= 
+                      if is_nil(@local_currency) || is_nil(@local_currency.local_currency_period.current_assets_total), 
+                      do: "-", 
+                      else: @local_currency.local_currency_period.net_income_total  
+                    %>
+                  </label>
                 </div>
                 <div class="ml-auto">
-                  <button type="button" phx-click="modal_form_open" phx-value-type="current_assets" class="px-6 py-1 text-sm font-bold rounded-lg bg-green-800 text-white">
+                  <button type="button" phx-click="modal_form_open" phx-value-type="net_income" class="px-6 py-1 text-sm font-bold rounded-lg bg-green-800 text-white">
                     Editar
                   </button>
                 </div>
@@ -316,7 +419,9 @@
               <div class="w-full p-2 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
                 <div>
                   <label class="block font-bold text-slate-600 text-sm">Net Income After Taxes</label>
-                  <label class="block font-medium text-slate-800 text-2xl">$3,005.00</label>
+                  <label class="block font-medium text-slate-800 text-2xl">
+                    <%= sum_totals(@local_currency, @currency_type, [:net_income_total, :operating_income_total, :gross_margin]) %>
+                  </label>
                 </div>
                 
               </div>
@@ -329,6 +434,42 @@
         </div>
 
       </div>
+
+      <%= if !is_nil(@local_currency) do %>
+        <div class="w-full flex pt-6 lg:pt-0 lg:my-10">
+          <div class="mx-auto relative">
+            <div class="inline-flex items-center">
+              <button
+                type="button"
+                class="mr-2 px-6 py-2 rounded-lg bg-slate-300 text-sm font-bold text-slate-700 hover:bg-slate-500 hover:text-slate-100"
+              >
+                Cancel
+              </button>
+
+              <%= if !is_nil(@customer) && !is_nil(@currency_type) do %>
+                <button
+                  type="submit"
+                  class="ml-2 px-8 py-2 rounded-lg bg-green-800 text-sm font-bold text-white hover:bg-green-300 hover:text-green-900"
+                >
+                  Save
+                </button>
+              <% else %>
+                <button
+                  type="submit"
+                  class="ml-2 px-8 py-2 rounded-lg bg-red-800 text-sm font-bold text-white hover:bg-red-300 hover:text-red-900"
+                >
+                  Save
+                </button>
+              <% end %>
+            </div>
+            <%= if !@valid_form do %>
+              <div class="block absolute top-0 left-0 mt-10 bg-red-100 shadow-lg rounded-lg z-20 p-2 ">
+                <label class="text-red-800 text-xs font-bold"><%= @error_message %></label>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
     </form>
 
   </div>
@@ -338,103 +479,841 @@
 
 
 <.modal_right modal_form_open={@modal_form_open} >
-  <form class="w-full">
-    <div class="inline-flex items-center w-full">
-      <label class="block text-slate-500 font-semibold">Current Assets</label>
-      <%= if !is_nil(@currency_type) do %>
-        <div class="ml-auto">
-          <label class="text-slate-600 font-bold text-xs block pl-2">Currency</label>
-          <div class="px-4 py-1 rounded-full bg-sky-100 text-sky-800 font-bold text-sm">
-            <%= String.replace(@currency_type.money_name, "_", " ") %>
+
+
+
+
+
+  <form phx-submit="submit_form_step" class="w-full">
+
+    <%= if @type_step == "current_assets" do %>
+      <div class="w-full">
+        <div class="inline-flex items-center w-full">
+          <label class="block text-slate-500 font-semibold">Current Assets</label>
+          <%= if !is_nil(@currency_type) do %>
+            <div class="ml-auto">
+              <label class="text-slate-600 font-bold text-xs block pl-2">Currency</label>
+              <div class="px-4 py-1 rounded-full bg-sky-100 text-sky-800 font-bold text-sm">
+                <%= String.replace(@currency_type.money_name, "_", " ") %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+    
+        <div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4 mt-4">
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="cash"
+            name="Cash"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="accounts_receivable_net"
+            name="Accounts Receivable, net"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="inventory"
+            name="Inventory"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="affiliates_advances"
+            name="Advances to Affiliates"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="def_refundable_inc_tax"
+            name="Def & Refundable Inc Tax"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="prepaid"
+            name="Prepaid"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="other_current_assets"
+            name="Other Current Assets"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <div class="col-span-2">
+            <.live_component
+              module={VinmarWeb.TextareaComponent}
+              id="other_current_assets_description"
+              name="Describe Other Current Assets"
+              form={@form_step}
+              type="text"
+              validations={[]}
+              required={false}
+              return={:updated_form_step}
+            />
           </div>
         </div>
-      <% end %>
-    </div>
-
-    <div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4 mt-4">
-      <.live_component
-        module={VinmarWeb.InputComponent}
-        id="cash"
-        name="Cash"
-        form={@form}
-        type="number"
-        validations={[]}
-        required={true}
-      />
-
-      <.live_component
-        module={VinmarWeb.InputComponent}
-        id="accounts_receivable_net"
-        name="Accounts Receivable, net"
-        form={@form}
-        type="number"
-        validations={[]}
-        required={true}
-      />
-
-      <.live_component
-        module={VinmarWeb.InputComponent}
-        id="inventory"
-        name="Inventory"
-        form={@form}
-        type="number"
-        validations={[]}
-        required={true}
-      />
-
-      <.live_component
-        module={VinmarWeb.InputComponent}
-        id="affiliates_advances"
-        name="Advances to Affiliates"
-        form={@form}
-        type="number"
-        validations={[]}
-        required={true}
-      />
-
-      <.live_component
-        module={VinmarWeb.InputComponent}
-        id="def_refundable_inc_tax"
-        name="Def & Refundable Inc Tax"
-        form={@form}
-        type="number"
-        validations={[]}
-        required={true}
-      />
-
-      <.live_component
-        module={VinmarWeb.InputComponent}
-        id="prepaid"
-        name="Prepaid"
-        form={@form}
-        type="number"
-        validations={[]}
-        required={true}
-      />
-
-      <.live_component
-        module={VinmarWeb.InputComponent}
-        id="other_current_assets"
-        name="Other Current Assets"
-        form={@form}
-        type="number"
-        validations={[]}
-        required={true}
-      />
-
-      <div class="col-span-2">
-        <.live_component
-          module={VinmarWeb.TextareaComponent}
-          id="other_current_assets_description"
-          name="Describe Other Current Assets"
-          form={@form}
-          type="text"
-          validations={[]}
-          required={false}
-        />
+    
+        
       </div>
-    </div>
+    <% end %>
 
+    <%= if @type_step == "fixed_assets" do %>
+      <div class="w-full">
+        <div class="inline-flex items-center w-full">
+          <label class="block text-slate-500 font-semibold">Fixed Assets</label>
+          <%= if !is_nil(@currency_type) do %>
+            <div class="ml-auto">
+              <label class="text-slate-600 font-bold text-xs block pl-2">Currency</label>
+              <div class="px-4 py-1 rounded-full bg-sky-100 text-sky-800 font-bold text-sm">
+                <%= String.replace(@currency_type.money_name, "_", " ") %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+    
+        <div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4 mt-4">
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="machinery_equipment"
+            name="Machinery & Equipment"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="office_equipment"
+            name="Office Equipment"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="real_state_buildings"
+            name="Real State & Buildings"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="transportation_equipment"
+            name="Transportation Equipment"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="other_fixed_assets"
+            name="Other Fixed Assets"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <div class="col-span-2">
+            <.live_component
+              module={VinmarWeb.TextareaComponent}
+              id="other_fixed_assets_description"
+              name="Describe Other Fixed Assets"
+              form={@form_step}
+              type="text"
+              validations={[]}
+              required={false}
+              return={:updated_form_step}
+            />
+          </div>
+
+
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="less_accumulated_depr"
+            name="Less Acumulated Depr"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+        </div>
+    
+        
+      </div>
+    <% end %>
+
+    <%= if @type_step == "other_assets" do %>
+      <div class="w-full">
+        <div class="inline-flex items-center w-full">
+          <label class="block text-slate-500 font-semibold">Other Assets</label>
+          <%= if !is_nil(@currency_type) do %>
+            <div class="ml-auto">
+              <label class="text-slate-600 font-bold text-xs block pl-2">Currency</label>
+              <div class="px-4 py-1 rounded-full bg-sky-100 text-sky-800 font-bold text-sm">
+                <%= String.replace(@currency_type.money_name, "_", " ") %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+    
+        <div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4 mt-4">
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="due_from_affiliates"
+            name="Due from Affiliates"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="deferred_charges"
+            name="Deferred Charges"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="intangible_goodwill"
+            name="Intangibles and Goodwill"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="investment_others"
+            name="Investments in Others"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="other_assets_1"
+            name="Other Assets"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <div class="col-span-2">
+            <.live_component
+              module={VinmarWeb.TextareaComponent}
+              id="other_assets_description"
+              name="Describe Other Assets"
+              form={@form_step}
+              type="text"
+              validations={[]}
+              required={false}
+              return={:updated_form_step}
+            />
+          </div>
+        </div>        
+      </div>
+    <% end %>
+
+    <%= if @type_step == "current_liabilities" do %>
+      <div class="w-full">
+        <div class="inline-flex items-center w-full">
+          <label class="block text-slate-500 font-semibold">Current Liabilities</label>
+          <%= if !is_nil(@currency_type) do %>
+            <div class="ml-auto">
+              <label class="text-slate-600 font-bold text-xs block pl-2">Currency</label>
+              <div class="px-4 py-1 rounded-full bg-sky-100 text-sky-800 font-bold text-sm">
+                <%= String.replace(@currency_type.money_name, "_", " ") %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+    
+        <div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4 mt-4">
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="bank_overdraft"
+            name="Bank Overdraft"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="accounts_payable"
+            name="Accounts Payable"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="bank_payable"
+            name="Bank Payable"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="current_portion_ltd"
+            name="Current Portion LTD"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="other_current_liab"
+            name="Other Current Liabilities"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <div class="col-span-2">
+            <.live_component
+              module={VinmarWeb.TextareaComponent}
+              id="other_current_liabilities_description"
+              name="Describe Other Current Liabilities"
+              form={@form_step}
+              type="text"
+              validations={[]}
+              required={false}
+              return={:updated_form_step}
+            />
+          </div>
+        </div>        
+      </div>
+    <% end %>
+
+    <%= if @type_step == "long_term_debt" do %>
+      <div class="w-full">
+        <div class="inline-flex items-center w-full">
+          <label class="block text-slate-500 font-semibold">Long Term Debt</label>
+          <%= if !is_nil(@currency_type) do %>
+            <div class="ml-auto">
+              <label class="text-slate-600 font-bold text-xs block pl-2">Currency</label>
+              <div class="px-4 py-1 rounded-full bg-sky-100 text-sky-800 font-bold text-sm">
+                <%= String.replace(@currency_type.money_name, "_", " ") %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+    
+        <div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4 mt-4">
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="bank_long_term_debt"
+            name="Bank Long Term Debt"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="subordinated_debt"
+            name="Subordinated Debt"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="other_lt_liabilities"
+            name="Other LT Liabilities"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <div class="col-span-2">
+            <.live_component
+              module={VinmarWeb.TextareaComponent}
+              id="other_lt_liabilities_description"
+              name="Describe Other LT Liabilities"
+              form={@form_step}
+              type="text"
+              validations={[]}
+              required={false}
+              return={:updated_form_step}
+            />
+          </div>
+        </div>        
+      </div>
+    <% end %>
+
+    <%= if @type_step == "stockholder_equity" do %>
+      <div class="w-full">
+        <div class="inline-flex items-center w-full">
+          <label class="block text-slate-500 font-semibold">Stockholder Equity</label>
+          <%= if !is_nil(@currency_type) do %>
+            <div class="ml-auto">
+              <label class="text-slate-600 font-bold text-xs block pl-2">Currency</label>
+              <div class="px-4 py-1 rounded-full bg-sky-100 text-sky-800 font-bold text-sm">
+                <%= String.replace(@currency_type.money_name, "_", " ") %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+    
+        <div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4 mt-4">
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="common_stock"
+            name="Common Stock"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="treasury_stock"
+            name="Treasury Stock"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="retained_earnings"
+            name="Retained Earnings"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="dividens_other"
+            name="Dividends"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="cash_flow_operation"
+            name="Net (Loss) Profit for the Year"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="other"
+            name="Other 1"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="other_2"
+            name="Other 2"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <div class="col-span-2">
+            <.live_component
+              module={VinmarWeb.TextareaComponent}
+              id="other_description"
+              name="Describe Other"
+              form={@form_step}
+              type="text"
+              validations={[]}
+              required={false}
+              return={:updated_form_step}
+            />
+          </div>
+        </div>        
+      </div>
+    <% end %>
+
+    <%= if @type_step == "gross_margin" do %>
+      <div class="w-full">
+        <div class="inline-flex items-center w-full">
+          <label class="block text-slate-500 font-semibold">Gross Margin</label>
+          <%= if !is_nil(@currency_type) do %>
+            <div class="ml-auto">
+              <label class="text-slate-600 font-bold text-xs block pl-2">Currency</label>
+              <div class="px-4 py-1 rounded-full bg-sky-100 text-sky-800 font-bold text-sm">
+                <%= String.replace(@currency_type.money_name, "_", " ") %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+    
+        <div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4 mt-4">
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="revenue"
+            name="Revenue"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="less_return_allow"
+            name="Less: Returns & Allow"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="cost_goods_sold"
+            name="Cost of Goods Sold"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="cost_goods_other"
+            name="Cost of Goods Other"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <div class="col-span-2">
+            <.live_component
+              module={VinmarWeb.TextareaComponent}
+              id="other_cost_goods_description"
+              name="Describe Cost of Goods Other"
+              form={@form_step}
+              type="text"
+              validations={[]}
+              required={false}
+              return={:updated_form_step}
+            />
+          </div>
+        </div>        
+      </div>
+    <% end %>
+
+    <%= if @type_step == "operating_income" do %>
+      <div class="w-full">
+        <div class="inline-flex items-center w-full">
+          <label class="block text-slate-500 font-semibold">Operating Income</label>
+          <%= if !is_nil(@currency_type) do %>
+            <div class="ml-auto">
+              <label class="text-slate-600 font-bold text-xs block pl-2">Currency</label>
+              <div class="px-4 py-1 rounded-full bg-sky-100 text-sky-800 font-bold text-sm">
+                <%= String.replace(@currency_type.money_name, "_", " ") %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+    
+        <div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4 mt-4">
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="salaries_wages"
+            name="Salaries & Wages"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="operating_experenses"
+            name="Operating Expenses"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="selling_expense"
+            name="Selling Expense"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="bad_debt_expense"
+            name="Bad Debt Expense"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="general_admin_exp"
+            name="General & Admin Expense"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="depreciation_expense"
+            name="Depreciation Expense"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="amortization_expense"
+            name="Amortization Expense"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="other_selling_expense"
+            name="Other"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <div class="col-span-2">
+            <.live_component
+              module={VinmarWeb.TextareaComponent}
+              id="other_income_description"
+              name="Describe Other"
+              form={@form_step}
+              type="text"
+              validations={[]}
+              required={false}
+              return={:updated_form_step}
+            />
+          </div>
+        </div>        
+      </div>
+    <% end %>
+
+    <%= if @type_step == "net_income" do %>
+      <div class="w-full">
+        <div class="inline-flex items-center w-full">
+          <label class="block text-slate-500 font-semibold">Net Income Before Taxes</label>
+          <%= if !is_nil(@currency_type) do %>
+            <div class="ml-auto">
+              <label class="text-slate-600 font-bold text-xs block pl-2">Currency</label>
+              <div class="px-4 py-1 rounded-full bg-sky-100 text-sky-800 font-bold text-sm">
+                <%= String.replace(@currency_type.money_name, "_", " ") %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+    
+        <div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4 mt-4">
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="interest_expense"
+            name="Interest Expense"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="non_recurring_expense"
+            name="Non Recurring Expenses"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="interest_income"
+            name="Interest Income"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <.live_component
+            module={VinmarWeb.InputComponent}
+            id="other_income_expense"
+            name="Other Income (Expense)"
+            form={@form_step}
+            type="number"
+            validations={[]}
+            required={false}
+            return={:updated_form_step}
+          />
+    
+          <div class="col-span-2">
+            <.live_component
+              module={VinmarWeb.TextareaComponent}
+              id="other_before_taxes_description"
+              name="Describe Cost of Goods Other"
+              form={@form_step}
+              type="text"
+              validations={[]}
+              required={false}
+              return={:updated_form_step}
+            />
+          </div>
+        </div>        
+      </div>
+    <% end %>
+
+
+
+
+
+    
     <div class="w-full flex pt-6 lg:pt-0 mt-8 lg:mt-16">
       <div class="mx-auto relative">
         <div class="inline-flex items-center">
@@ -446,7 +1325,7 @@
             Cancel
           </button>
 
-          <%= if @valid_form do %>
+          <%= if @valid_form_step do %>
             <button
               type="submit"
               class="ml-2 px-8 py-2 rounded-lg bg-green-800 text-sm font-bold text-white hover:bg-green-300 hover:text-green-900"
@@ -462,13 +1341,14 @@
             </button>
           <% end %>
         </div>
-        <%= if !@valid_form do %>
+        <%= if !@valid_form_step do %>
           <div class="block absolute top-0 left-0 mt-10">
-            <label class="text-red-800 text-xs font-bold"><%= @error_message %></label>
+            <label class="text-red-800 text-xs font-bold"><%= @error_message_step %></label>
           </div>
         <% end %>
       </div>
     </div>
+    
   </form>
 </.modal_right>
 

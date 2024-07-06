@@ -52,6 +52,7 @@ defmodule Vinmar.LocalCurrencies.LocalCurrencyPeriod do
     :retained_earnings,
     :other_2,
     :dividens_other,
+    # cash_flow_operation se usa por NEt loss profit
     :cash_flow_operation,
     :revenue,
     :less_return_allow,
@@ -78,11 +79,40 @@ defmodule Vinmar.LocalCurrencies.LocalCurrencyPeriod do
     :other_description,
     :other_cost_goods_description,
     :other_income_description,
-    :other_before_taxes_description
+    :other_before_taxes_description,
+    :exchange_rate_id,
+    :gross_profit_margin,
+    :operating_profit_margin,
+    :net_profit_margin,
+    :return_assets,
+    :roce,
+    :leverage,
+    :return_equity,
+    :cash_flow_margin,
+    :dso,
+    :dio,
+    :dpo,
+    :dwo,
+    :fixed_asset_turnover,
+    :net_asset_to,
+    :sales_total_assets,
+    :current_ration,
+    :quick_ratio,
+    :cash_flow_from_operation,
+    :cash_flow_liquidity_ratio,
+    :working_capital,
+    :current_assets_total,
+    :fixed_assets_total,
+    :other_assets_total,
+    :current_liabilities_total,
+    :long_term_debt_total,
+    :stockholder_equity_total,
+    :gross_margin_total,
+    :operating_income_total,
+    :net_income_total
   ]
   @required_fields [
-    :financial_statement_format_id,
-    :exchange_rate_id
+    :financial_statement_format_id
   ]
 
   typed_schema "local_currency_periods" do
@@ -154,6 +184,45 @@ defmodule Vinmar.LocalCurrencies.LocalCurrencyPeriod do
     field :interest_income, Money.Ecto.Composite.Type
     field :other_income_expense, Money.Ecto.Composite.Type
     field :taxes, Money.Ecto.Composite.Type
+
+    field :gross_profit_margin, Money.Ecto.Composite.Type
+    field :operating_profit_margin, Money.Ecto.Composite.Type
+    field :net_profit_margin, Money.Ecto.Composite.Type
+    field :return_assets, Money.Ecto.Composite.Type
+    field :roce, Money.Ecto.Composite.Type
+    field :leverage, Money.Ecto.Composite.Type
+    field :return_equity, Money.Ecto.Composite.Type
+    field :cash_flow_margin, Money.Ecto.Composite.Type
+
+    field :dso, Money.Ecto.Composite.Type
+    field :dio, Money.Ecto.Composite.Type
+    field :dpo, Money.Ecto.Composite.Type
+    field :dwo, Money.Ecto.Composite.Type
+    field :fixed_asset_turnover, Money.Ecto.Composite.Type
+    field :net_asset_to, Money.Ecto.Composite.Type
+    field :sales_total_assets, Money.Ecto.Composite.Type
+
+    field :current_ration, Money.Ecto.Composite.Type
+    field :quick_ratio, Money.Ecto.Composite.Type
+    field :cash_flow_from_operation, Money.Ecto.Composite.Type
+    field :cash_flow_liquidity_ratio, Money.Ecto.Composite.Type
+    field :working_capital, Money.Ecto.Composite.Type
+
+    field :debt_to_equity, Money.Ecto.Composite.Type
+    field :dect_ratio, Money.Ecto.Composite.Type
+    field :times_interest_earned, Money.Ecto.Composite.Type
+    field :lt_working_capital, Money.Ecto.Composite.Type
+    field :dscr, Money.Ecto.Composite.Type
+
+    field :current_assets_total, Money.Ecto.Composite.Type
+    field :fixed_assets_total, Money.Ecto.Composite.Type
+    field :other_assets_total, Money.Ecto.Composite.Type
+    field :current_liabilities_total, Money.Ecto.Composite.Type
+    field :long_term_debt_total, Money.Ecto.Composite.Type
+    field :stockholder_equity_total, Money.Ecto.Composite.Type
+    field :gross_margin_total, Money.Ecto.Composite.Type
+    field :operating_income_total, Money.Ecto.Composite.Type
+    field :net_income_total, Money.Ecto.Composite.Type
 
     belongs_to :financial_statement_format, FinancialStatementFormat,
       foreign_key: :financial_statement_format_id,

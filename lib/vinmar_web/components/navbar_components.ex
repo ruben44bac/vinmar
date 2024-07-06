@@ -99,7 +99,7 @@ defmodule VinmarWeb.NavbarComponent do
                 Privacidad
               </a>
               <a
-                href="/login"
+                href="/users/log_out"
                 class="group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md text-slate-100 hover:text-green-900 hover:font-bold hover:bg-green-200"
               >
                 <!-- Heroicon name: outline/shield-check -->

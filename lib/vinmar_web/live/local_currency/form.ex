@@ -1,6 +1,8 @@
 defmodule VinmarWeb.LocalCurrencyLive.Form do
   use VinmarWeb, :live_view
 
+  import Phoenix.View, only: [render_to_iodata: 3]
+
   import VinmarWeb.Utils.Form,
     only: [
       format_money: 3,
@@ -13,28 +15,100 @@ defmodule VinmarWeb.LocalCurrencyLive.Form do
   alias Vinmar.LocalCurrencies.{
     CurrencyTypeManagment,
     LocalCurrencyManager,
-    FinancialStatementFormatManager
+    LocalCurrencyPeriodManager,
+    FinancialStatementFormatManager,
+    LocalCurrencyPeriod
   }
 
   import VinmarWeb.ModalComponent, only: [modal_right: 1]
 
   @money_fields [
-    "current_credit_limit",
-    "current_insurance_coverage",
-    "request_credit_limit",
-    "request_insurance_coverage",
-    "amount",
-    "recommended_limit",
-    "recommended_credit_limit",
-    "credit_facilities",
-    "availability_headroom"
+    "balance_f_x",
+    "cash",
+    "accounts_receivable_net",
+    "inventory",
+    "affiliates_advances",
+    "def_refundable_inc_tax",
+    "other_current_assets",
+    "prepaid",
+    "machinery_equipment",
+    "office_equipment",
+    "other_fixed_assets",
+    "transportation_equipment",
+    "real_state_buildings",
+    "less_accumulated_depr",
+    "due_from_affiliates",
+    "deferred_charges",
+    "intangible_goodwill",
+    "investment_others",
+    "other_assets_1",
+    "other_assets_2",
+    "bank_overdraft",
+    "accounts_payable",
+    "bank_payable",
+    "other_current_liab",
+    "current_portion_ltd",
+    "bank_long_term_debt",
+    "other_lt_liabilities",
+    "subordinated_debt",
+    "common_stock",
+    "other",
+    "treasury_stock",
+    "retained_earnings",
+    "other_2",
+    "dividens_other",
+    "cash_flow_operation",
+    "revenue",
+    "less_return_allow",
+    "cost_goods_sold",
+    "cost_goods_other",
+    "salaries_wages",
+    "operating_experenses",
+    "selling_expense",
+    "other_selling_expense",
+    "bad_debt_expense",
+    "general_admin_exp",
+    "depreciation_expense",
+    "amortization_expense",
+    "interest_expense",
+    "non_recurring_expense",
+    "interest_income",
+    "other_income_expense",
+    "taxes",
+    "gross_profit_margin",
+    "operating_profit_margin",
+    "net_profit_margin",
+    "return_assets",
+    "roce",
+    "leverage",
+    "return_equity",
+    "cash_flow_margin",
+    "dso",
+    "dio",
+    "dpo",
+    "dwo",
+    "fixed_asset_turnover",
+    "net_asset_to",
+    "sales_total_assets",
+    "current_ration",
+    "quick_ratio",
+    "cash_flow_from_operation",
+    "cash_flow_liquidity_ratio",
+    "working_capital",
+    "current_assets_total",
+    "fixed_assets_total",
+    "other_assets_total",
+    "current_liabilities_total",
+    "long_term_debt_total",
+    "stockholder_equity_total",
+    "gross_margin_total",
+    "operating_income_total",
+    "net_income_total"
   ]
 
   @date_fields [
-    "reviewed_at",
-    "next_reviewed_at",
-    "last_expirated_at",
-    "expirated_at"
+    "statetment_a",
+    "statetment_as_to"
   ]
 
   @impl true
@@ -45,13 +119,17 @@ defmodule VinmarWeb.LocalCurrencyLive.Form do
      assign(socket,
        tree: [:home, :local_currency_list],
        form: %{},
+       form_step: %{},
        page_title: "",
+       type_step: "",
        loading: true,
        error_message: nil,
+       error_message_step: nil,
        customer: nil,
        local_currency: nil,
        currency_type: nil,
        valid_form: true,
+       valid_form_step: true,
        option_years: get_option_years(),
        currency_types: [],
        option_currency_types: [],
@@ -85,6 +163,11 @@ defmodule VinmarWeb.LocalCurrencyLive.Form do
   def handle_info({:updated_form, %{form: form, valid: _valid}}, socket) do
     IO.inspect(form, label: "form ---> ")
     {:noreply, assign(socket, form: form, valid_form: true, error_message: "")}
+  end
+
+  def handle_info({:updated_form_step, %{form: form_step, valid: _valid}}, socket) do
+    IO.inspect(form_step, label: "form_step ---> ")
+    {:noreply, assign(socket, form_step: form_step, valid_form: true, error_message: "")}
   end
 
   def handle_info({:update_currency_type, %{form: form, valid: _valid}}, socket) do
@@ -131,14 +214,16 @@ defmodule VinmarWeb.LocalCurrencyLive.Form do
      )}
   end
 
-  def handle_event("submit_form", _params, socket) do
-    params = socket.assigns.form
+  def handle_event("submit_form", params, socket) do
+    params = Map.merge(params, socket.assigns.form)
 
     with :ok <- validate_form(params) do
+      money_key = String.to_atom(socket.assigns.currency_type.money_key)
+
       params
       |> format_dates_to_datetime(@date_fields)
-      |> format_money(@money_fields, :USD)
-      |> update_create(socket, socket.assigns.summary)
+      |> format_money(@money_fields, money_key)
+      |> update_create(socket, socket.assigns.local_currency)
     else
       {:error, message} ->
         {:noreply,
@@ -148,12 +233,82 @@ defmodule VinmarWeb.LocalCurrencyLive.Form do
     end
   end
 
+  def handle_event("submit_form_step", params, socket) do
+    money_key = String.to_atom(socket.assigns.currency_type.money_key)
+
+    params =
+      params
+      |> Map.merge(socket.assigns.form_step)
+      |> LocalCurrencyPeriodManager.calculate_total(money_key, socket.assigns.type_step)
+      |> IO.inspect(label: "Whats ---_> ")
+
+    local_currency = socket.assigns.local_currency
+
+    local_currency.local_currency_period
+    |> LocalCurrencyPeriodManager.update(params)
+    |> case do
+      {:ok, local_currency_period} ->
+        {:noreply,
+         socket
+         |> assign(:modal_form_open, false)
+         |> assign(
+           :local_currency,
+           Map.put(local_currency, :local_currency_period, local_currency_period)
+         )
+         |> put_flash(:info, "Analysis was updated.")}
+
+      {:erorr, data} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, inspect(data))}
+    end
+  end
+
   def handle_event("modal_form_close", _params, socket) do
     {:noreply, assign(socket, modal_form_open: false)}
   end
 
   def handle_event("modal_form_open", %{"type" => type}, socket) do
-    {:noreply, assign(socket, modal_form_open: true, modal_form_type: String.to_atom(type))}
+    form_step =
+      prepare_period_data(
+        socket.assigns.local_currency.local_currency_period,
+        LocalCurrencyPeriodManager.get_topic_keys(type)
+      )
+      |> IO.inspect(label: "form --->>>>>> ")
+
+    {:noreply,
+     assign(socket,
+       form_step: form_step,
+       type_step: type,
+       modal_form_open: true,
+       modal_form_type: type,
+       valid_form_step: true,
+       error_message_step: nil
+     )}
+  end
+
+  def sum_totals(nil, nil, _list), do: "0"
+
+  def sum_totals(_, nil, _list), do: "0"
+
+  def sum_totals(nil, _, _list), do: "0"
+
+  def sum_totals(local_currency, currency_type, list) do
+    money_key = String.to_atom(currency_type.money_key)
+
+    local_currency.local_currency_period
+    |> Map.take(list)
+    |> Enum.reduce(Money.new(money_key, "0"), fn {k, val}, acc ->
+      if is_nil(val) do
+        acc
+      else
+        Money.add(val, acc)
+        |> case do
+          {:ok, mon} -> mon
+          _error -> acc
+        end
+      end
+    end)
   end
 
   def get_currency(currency_id, currency_types) do
@@ -166,9 +321,9 @@ defmodule VinmarWeb.LocalCurrencyLive.Form do
   end
 
   def calculate_exchange(form, currency_types) do
-    current_credit_limit = Decimal.new(form["current_credit_limit"])
+    balance_f_x = Decimal.new(form["balance_f_x"])
 
-    if Decimal.gt?(current_credit_limit, "0") do
+    if Decimal.gt?(balance_f_x, "0") do
       currency_id = form["currency_type_id"]
 
       currency_types
@@ -181,7 +336,7 @@ defmodule VinmarWeb.LocalCurrencyLive.Form do
           key = String.to_atom(currency.money_key)
 
           1
-          |> Decimal.div(current_credit_limit)
+          |> Decimal.div(balance_f_x)
           |> IO.inspect(label: "div ---> ")
           |> then(&Money.new(key, &1))
       end
@@ -190,19 +345,30 @@ defmodule VinmarWeb.LocalCurrencyLive.Form do
     end
   end
 
+  defp prepare_period_data(period, keys) do
+    period
+    |> Map.take(keys)
+    |> convert_struct_form(%{
+      date: @date_fields,
+      money: @money_fields
+    })
+  end
+
   defp update_create(params, socket, nil) do
     params
-    |> ExecutiveSummaryManager.create([], %{
-      type: "Create summary",
+    |> LocalCurrencyManager.create([], %{
+      type: "Create local_currency",
       transaction_responsible: socket.assigns.current_user.id
     })
     |> case do
-      {:ok, %{create_entity: summary}} ->
+      {:ok, %{create_entity: local_currency}} ->
+        update_create_period(local_currency.id, params)
+
         {:noreply,
          socket
-         |> assign(form: params)
-         |> put_flash(:info, "Summary was created.")
-         |> redirect(to: "/summary/form/#{summary.id}/2")}
+         |> assign(form: params, local_currency: local_currency)
+         |> put_flash(:info, "Credit Analysis was started.")
+         |> push_patch(to: ~p"/local_currency/form/#{local_currency.id}")}
 
       {:error, _atom, error, _data} ->
         {:noreply, socket |> assign(form: params) |> put_flash(:error, inspect(error))}
@@ -212,35 +378,24 @@ defmodule VinmarWeb.LocalCurrencyLive.Form do
     end
   end
 
-  defp update_create(params, socket, summary) do
+  defp update_create(params, socket, local_currency) do
     step = socket.assigns.current_step
 
-    summary
-    |> ExecutiveSummaryManager.update(params, %{
-      type: "Update summary",
+    local_currency
+    |> LocalCurrencyManager.update(params, %{
+      type: "Update local_currency",
       transaction_responsible: socket.assigns.current_user.id
     })
     |> case do
-      {:ok, %{update_entity: summary}} ->
-        summary = get_entity(summary.id)
+      {:ok, %{update_entity: local_currency}} ->
+        local_currency = get_entity(local_currency.id)
 
-        update_create_review(summary.id, params, step)
+        update_create_period(local_currency.id, params)
 
-        if step == 2 do
-          {:noreply,
-           socket
-           |> put_flash(:info, "Summary was updated.")
-           |> redirect(to: "/summary")}
-        else
-          {:noreply,
-           socket
-           |> assign(
-             summary: summary,
-             customer: summary.customer,
-             current_step: step + 1
-           )
-           |> put_flash(:info, "Summary was updated.")}
-        end
+        {:noreply,
+         socket
+         |> put_flash(:info, "Analysis was updated.")
+         |> redirect(to: "/local_currency")}
 
       {:error, _atom, error, _data} ->
         {:noreply, socket |> assign(form: params) |> put_flash(:error, inspect(error))}
@@ -250,19 +405,18 @@ defmodule VinmarWeb.LocalCurrencyLive.Form do
     end
   end
 
-  defp update_create_review(summary_id, params, 2) do
-    review = ReviewManager.get(executive_summary_id: summary_id)
+  defp update_create_period(local_currency_id, params) do
+    period =
+      LocalCurrencyPeriodManager.get(local_currency_id: local_currency_id)
 
-    if is_nil(review) do
+    if is_nil(period) do
       params
-      |> Map.put("executive_summary_id", summary_id)
-      |> ReviewManager.create()
+      |> Map.put("local_currency_id", local_currency_id)
+      |> LocalCurrencyPeriodManager.create()
     else
-      ReviewManager.update(review, params)
+      LocalCurrencyPeriodManager.update(period, params)
     end
   end
-
-  defp update_create_review(_summary_id, _params, _step), do: nil
 
   defp apply_action(socket, :new, _params) do
     assign(socket,
@@ -272,29 +426,44 @@ defmodule VinmarWeb.LocalCurrencyLive.Form do
   end
 
   defp apply_action(socket, :edit, %{"id" => id} = params) do
-    summary =
-      ExecutiveSummaryManager.get!(id, [:review, customer: [:customer_type, :country]])
+    local_currency = get_entity(id)
 
-    review_form = if is_nil(summary.review), do: %{}, else: convert_struct_form(summary.review)
+    period_form =
+      if is_nil(local_currency.local_currency_period),
+        do: %{},
+        else:
+          convert_struct_form(local_currency.local_currency_period, %{
+            date: @date_fields,
+            money: @money_fields
+          })
 
     form =
-      summary
+      local_currency
       |> convert_struct_form(%{date: @date_fields, money: @money_fields})
-      |> Map.merge(review_form)
+      |> Map.merge(period_form)
 
     assign(socket,
       page_title: "Edit Credit Analysis",
       tree: socket.assigns.tree ++ [:edit_local_currency],
-      customer: summary.customer,
-      summary: summary,
+      customer: local_currency.customer,
+      currency_type: local_currency.currency_type,
+      local_currency: local_currency,
       form: form
     )
   end
 
   defp validate_form(params) do
     params
+    |> IO.inspect(label: "data ---> ")
     |> Enum.reduce([], fn
       {"customer_id", "0"}, acc -> acc ++ ["Customer"]
+      {"currency_type_id", "0"}, acc -> acc ++ ["Currency"]
+      {"financial_statement_format_id", "0"}, acc -> acc ++ ["Financial Statement Format"]
+      {"year", "0"}, acc -> acc ++ ["Year"]
+      {"balance_f_x", "0"}, acc -> acc ++ ["Exchange Rate to USD can't be 0"]
+      {"balance_f_x", ""}, acc -> acc ++ ["Exchange Rate to USD"]
+      {"statetment_as_to", "0"}, acc -> acc ++ ["Statetment as of"]
+      {"no_months", "0"}, acc -> acc ++ ["Number of months"]
       _param, acc -> acc
     end)
     |> case do
@@ -304,7 +473,11 @@ defmodule VinmarWeb.LocalCurrencyLive.Form do
   end
 
   defp get_entity(id) do
-    LocalCurrencyManager.get!(id, customer: [:customer_type, :country])
+    LocalCurrencyManager.get!(id, [
+      :currency_type,
+      :local_currency_period,
+      customer: [:customer_type, :country]
+    ])
   end
 
   defp get_option_years do
