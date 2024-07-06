@@ -1,8 +1,6 @@
 defmodule VinmarWeb.LocalCurrencyLive.Form do
   use VinmarWeb, :live_view
 
-  import Phoenix.View, only: [render_to_iodata: 3]
-
   import VinmarWeb.Utils.Form,
     only: [
       format_money: 3,
