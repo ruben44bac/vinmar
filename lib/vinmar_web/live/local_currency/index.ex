@@ -18,7 +18,11 @@ defmodule VinmarWeb.LocalCurrencyLive.Index do
 
   def handle_info(:after_join, socket) do
     list =
-      LocalCurrencyManager.get_all([], [], [], [])
+      LocalCurrencyManager.get_all([], [], [], [
+        :currency_type,
+        :local_currency_period,
+        customer: [:customer_type, :country]
+      ])
 
     {:noreply,
      assign(socket,

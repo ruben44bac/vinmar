@@ -6,7 +6,7 @@
         <div class="sm:flex-auto">
           <h1 class="text-base font-semibold leading-6 text-gray-900"><%= @page_title %></h1>
           <p class="mt-2 text-sm text-gray-700">
-            #TODO: Pending description
+            
           </p>
         </div>
         <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
@@ -34,7 +34,7 @@
                     scope="col"
                     class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3"
                   >
-                    Review Date
+                    Created Date
                   </th>
                   <th
                     scope="col"
@@ -75,19 +75,20 @@
                 <%= for item <- @list do %>
                 <tr class="even:bg-gray-50">
                   <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
-                    <%= item.id %>
+                    <label class="block"><%= item.customer.name %></label>
+                    <label class="block text-xs"><%= item.customer.sap_id %></label>
                   </td>
                   <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                    <%= item.inserted_at %>
+                    <%= Timex.Format.DateTime.Formatter.format!(item.inserted_at, "%Y-%m-%d %H:%M", :strftime) %>
                   </td>
                   <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                    
+                    <%= if is_nil(item.local_currency_period), do: "-", else: item.local_currency_period.net_income_total %>
                   </td>
                   <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                    
+                    <%= if is_nil(item.local_currency_period), do: "-", else: item.local_currency_period.current_assets_total %>
                   </td>
                   <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                    
+                    <%= if is_nil(item.local_currency_period), do: "-", else: item.local_currency_period.current_liabilities_total %>
                   </td>
                   <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                     

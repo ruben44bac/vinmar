@@ -78,7 +78,7 @@
                     <%= item.customer.sap_id %> - <%= item.customer.name %>
                   </td>
                   <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                    <%= item.reviewed_at %>
+                    <%= Timex.Format.DateTime.Formatter.format!(item.reviewed_at, "%Y-%m-%d %H:%M", :strftime) %>
                   </td>
                   <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                     
