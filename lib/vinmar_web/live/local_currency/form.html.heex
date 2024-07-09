@@ -3,7 +3,7 @@
   <div class=" w-full mt-3">
     <div class="w-full p-2">
       
-      <div class="inline-flex items-center w-full">
+      <div class="lg:inline-flex items-center w-full">
         <div>
           <div class="block text-xl font-bold text-slate-800"><%= @page_title %></div>
           <div class="text-slate-600 font-medium block">
@@ -11,13 +11,13 @@
           </div>
         </div>
 
-        <div class="ml-auto">
+        <div class="ml-auto w-full lg:w-auto">
           <%= if is_nil(@form["currency_type_id"]) || is_nil(@form["balance_f_x"]) || @form["balance_f_x"] == "" || @form["currency_type_id"] == "0" do %>
             <div class="w-full rounded-lg bg-red-100 text-red-900 px-4 py-2">
               <label class="font-bold text-sm">Pending USD to Currency</label>
             </div>
           <% else %>
-            <div class="w-64 rounded-lg bg-sky-100 shadow-lg px-4 py-2 inline-flex items-center">
+            <div class="w-full lg:w-64 rounded-lg bg-sky-100 shadow-lg px-4 py-2 inline-flex items-center">
               <div class="text-center w-5/12">
                 <label class="text-xs block font-bold text-sky-700">USD</label>
                 <label class="text-base block font-bold text-sky-900"><%= Money.new(:USD, "1") %></label>
@@ -37,7 +37,7 @@
     </div>
     
     <form phx-submit="submit_form">
-      <div class="grid grid-cols-1 lg:grid-cols-4 lg:gap-4">
+      <div class="grid grid-cols-1 lg:grid-cols-4 lg:gap-4 gap-3">
 
         <div class="bg-white rounded-lg p-4 border">
           <div class="w-full grid grid-cols-1 lg:gap-4">
@@ -65,7 +65,7 @@
 
         </div>
 
-        <div class="col-span-3 bg-white rounded-lg p-4 border">
+        <div class="lg:col-span-3 bg-white rounded-lg p-4 border">
           <label class="block text-slate-500 font-semibold">Financial Statement</label>
           <div class="w-full mt-4 grid grid-cols-1 lg:grid-cols-3 lg:gap-4">
 
@@ -171,7 +171,7 @@
         </div>
       <% end %>
 
-      <div class="grid grid-cols-1 lg:grid-cols-3 lg:gap-4 mt-4 relative">
+      <div class="grid grid-cols-1 lg:grid-cols-3 lg:gap-4 gap-3 mt-4 relative">
         <%= if is_nil(@local_currency) do %>
           <div class="absolute inline-flex items-center top-0 left-0 w-full backdrop-blur-sm bg-white/20 h-full rounded-lg z-10">
             <div class="mx-auto">
@@ -589,9 +589,9 @@
       <% end %>
     </div>
 
-    <div class="overflow-y-scroll w-full h-[75vh]">
+    <div class="overflow-y-scroll w-full lg:h-[75vh] h-[80vh]">
       <div class="w-full grid grid-cols-1 lg:grid-cols-4 gap-3 lg:gap-4">
-        <div class="col-span-4 text-xl font-bold text-slate-600">
+        <div class="lg:col-span-4 text-xl font-bold text-slate-600">
           Operating Performance
         </div>
         <div class="bg-slate-100 rounded-lg px-4 py-3">
@@ -636,7 +636,7 @@
 
 
 
-        <div class="col-span-4 text-xl font-bold text-slate-600">
+        <div class="lg:col-span-4 text-xl font-bold text-slate-600">
           Operating Efficiency
         </div>
         <div class="bg-slate-100 rounded-lg px-4 py-3">
@@ -659,7 +659,7 @@
           <label class="block text-medium">130</label>
         </div>
 
-        <div class="bg-slate-100 rounded-lg px-4 py-3 col-span-2">
+        <div class="bg-slate-100 rounded-lg px-4 py-3 lg:col-span-2">
           <label class="text-sm font-bold text-slate-600 block">Net Asset TO (Sales/Capital Emp.)</label>
           <label class="block text-medium">1.23</label>
         </div>
@@ -671,7 +671,7 @@
 
 
 
-        <div class="col-span-4 text-xl font-bold text-slate-600">
+        <div class="lg:col-span-4 text-xl font-bold text-slate-600">
           Liquidity Measures
         </div>
         <div class="bg-slate-100 rounded-lg px-4 py-3">
@@ -684,12 +684,12 @@
           <label class="block text-medium">.03</label>
         </div>
 
-        <div class="bg-slate-100 rounded-lg px-4 py-3 col-span-2">
+        <div class="bg-slate-100 rounded-lg px-4 py-3 lg:col-span-2">
           <label class="text-sm font-bold text-slate-600 block">Cash Flow from Operation</label>
           <label class="block text-medium">43%</label>
         </div>
 
-        <div class="bg-slate-100 rounded-lg px-4 py-3 col-span-2">
+        <div class="bg-slate-100 rounded-lg px-4 py-3 lg:col-span-2">
           <label class="text-sm font-bold text-slate-600 block">Cash Flow Liquidity Ratio</label>
           <label class="block text-medium">23%</label>
         </div>
@@ -701,7 +701,7 @@
 
 
 
-        <div class="col-span-4 text-xl font-bold text-slate-600">
+        <div class="lg:col-span-4 text-xl font-bold text-slate-600">
           Leverage Measures
         </div>
         <div class="bg-slate-100 rounded-lg px-4 py-3">
@@ -724,7 +724,7 @@
           <label class="block text-medium">11</label>
         </div>
 
-        <div class="bg-slate-100 rounded-lg px-4 py-3 col-span-2">
+        <div class="bg-slate-100 rounded-lg px-4 py-3 lg:col-span-2">
           <label class="text-sm font-bold text-slate-600 block">Debt Service Coverage Ratio (DSCR)</label>
           <label class="block text-medium">0.034</label>
         </div>
