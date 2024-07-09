@@ -22,6 +22,7 @@ defmodule VinmarWeb.Utils.Form do
     form
     |> Map.take(keys)
     |> Enum.map(&new_money(&1, type))
+    |> IO.inspect(label: "format_money ---> ")
     |> Map.new()
     |> then(&Map.merge(form, &1))
   end
@@ -91,7 +92,11 @@ defmodule VinmarWeb.Utils.Form do
   defp new_money({k, v}, type) do
     type
     |> Money.new(v)
-    |> then(&{k, &1})
+    |> IO.inspect(label: "new_money new_money ---> ")
+    |> case do
+      %Money{} = value -> {k, value}
+      _ -> {k, v}
+    end
   end
 
   defp convert_date_to_datetime({k, v}) when v in [nil, ""], do: {k, nil}

@@ -158,7 +158,7 @@ defmodule VinmarWeb.NavbarComponent do
       },
       %{
         id: 4,
-        name: "Local currency",
+        name: "Credit Analysis",
         url: "/local_currency",
         svg: """
         <svg class=\"mr-4 flex-shrink-0 h-6 w-6\"  xmlns="http://www.w3.org/2000/svg" width=\"24\" height=\"24\" fill=\"currentColor\" viewBox=\"0 0 512 512\">

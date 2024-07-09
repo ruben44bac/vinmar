@@ -195,11 +195,20 @@
             <label class="block text-slate-500 font-semibold">Balance Sheet</label>
             <div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
               <div class="w-full grid grid-cols-1 gap-4">
+                <div class="w-full h-24">
+                  <button phx-click="modal_ratio_open" type="button" class="px-6 py-2 rounded-lg bg-amber-700 text-white">
+                    Ratio Analysis
+                  </button>
+                </div>
 
-
-                <div class="w-full p-2 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
+                <div class="w-full p-2 h-20 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
                   <div>
-                    <label class="block font-bold text-slate-600 text-sm">Current Assets</label>
+                    <div class="w-full inline-flex items-center">
+                      <label class="block font-bold text-slate-600 text-sm">Current Assets</label>
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="w-4 h-4 text-green-600" fill="currentColor">
+                        <path d="M318 177.5c3.8-8.8 2-19-4.6-26l-136-144C172.9 2.7 166.6 0 160 0s-12.9 2.7-17.4 7.5l-136 144c-6.6 7-8.4 17.2-4.6 26S14.4 192 24 192H96l0 288c0 17.7 14.3 32 32 32h64c17.7 0 32-14.3 32-32l0-288h72c9.6 0 18.2-5.7 22-14.5z"/>
+                      </svg>
+                    </div>
                     <label class="block font-medium text-slate-800 text-base">
                       <%= 
                         if is_nil(@local_currency) || is_nil(@local_currency.local_currency_period.current_assets_total), 
@@ -216,9 +225,14 @@
                 </div>
 
 
-                <div class="w-full p-2 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
+                <div class="w-full p-2 h-20 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
                   <div>
-                    <label class="block font-bold text-slate-600 text-sm">Fixed Assets</label>
+                    <div class="w-full inline-flex items-center">
+                      <label class="block font-bold text-slate-600 text-sm">Fixed Assets</label>
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="w-4 h-4 text-green-600" fill="currentColor">
+                        <path d="M318 177.5c3.8-8.8 2-19-4.6-26l-136-144C172.9 2.7 166.6 0 160 0s-12.9 2.7-17.4 7.5l-136 144c-6.6 7-8.4 17.2-4.6 26S14.4 192 24 192H96l0 288c0 17.7 14.3 32 32 32h64c17.7 0 32-14.3 32-32l0-288h72c9.6 0 18.2-5.7 22-14.5z"/>
+                      </svg>
+                    </div>
                     <label class="block font-medium text-slate-800 text-base">
                       <%= 
                         if is_nil(@local_currency) || is_nil(@local_currency.local_currency_period.current_assets_total), 
@@ -235,9 +249,14 @@
                 </div>
 
 
-                <div class="w-full p-2 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
+                <div class="w-full p-2 h-20 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
                   <div>
-                    <label class="block font-bold text-slate-600 text-sm">Other Assets</label>
+                    <div class="w-full inline-flex items-center">
+                      <label class="block font-bold text-slate-600 text-sm">Other Assets</label>
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="w-4 h-4 text-green-600" fill="currentColor">
+                        <path d="M318 177.5c3.8-8.8 2-19-4.6-26l-136-144C172.9 2.7 166.6 0 160 0s-12.9 2.7-17.4 7.5l-136 144c-6.6 7-8.4 17.2-4.6 26S14.4 192 24 192H96l0 288c0 17.7 14.3 32 32 32h64c17.7 0 32-14.3 32-32l0-288h72c9.6 0 18.2-5.7 22-14.5z"/>
+                      </svg>
+                    </div>
                     <label class="block font-medium text-slate-800 text-base">
                       <%= 
                         if is_nil(@local_currency) || is_nil(@local_currency.local_currency_period.current_assets_total), 
@@ -253,14 +272,22 @@
                   </div>
                 </div>
 
+
                 <div class="bg-slate-300 h-1 w-full rounded"></div>
 
 
-                <div class="w-full p-2 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
+                <div class={if Money.equal?(
+                  sum_totals(@local_currency, @currency_type, [{:add, :current_liabilities_total}, {:add, :long_term_debt_total}, {:add, :stockholder_equity_total}]),
+                  sum_totals(@local_currency, @currency_type, [{:add, :current_assets_total}, {:add, :fixed_assets_total}, {:add, :other_assets_total}])
+                ), do: """
+                w-full p-2 h-24 bg-green-200 border-2 border-green-500 rounded-lg relative inline-flex items-center
+                """, else: """
+                w-full p-2 h-24 bg-red-200 border-2 border-red-500 rounded-lg relative inline-flex items-center
+                """}>
                   <div>
                     <label class="block font-bold text-slate-600 text-sm">Total Assets</label>
                     <label class="block font-medium text-slate-800 text-2xl">
-                      <%= sum_totals(@local_currency, @currency_type, [:current_assets_total, :fixed_assets_total, :other_assets_total]) %>
+                      <%= sum_totals(@local_currency, @currency_type, [{:add, :current_assets_total}, {:add, :fixed_assets_total}, {:add, :other_assets_total}]) %>
                     </label>
                   </div>
                   
@@ -273,9 +300,14 @@
               <div class="w-full grid grid-cols-1 gap-4">
 
 
-                <div class="w-full p-2 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
+                <div class="w-full p-2 h-20 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
                   <div>
-                    <label class="block font-bold text-slate-600 text-sm">Current Liabilities</label>
+                    <div class="w-full inline-flex items-center">
+                      <label class="block font-bold text-slate-600 text-sm">Current Liabilities</label>
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="w-4 h-4 text-red-600" fill="currentColor">
+                        <path d="M2 334.5c-3.8 8.8-2 19 4.6 26l136 144c4.5 4.8 10.8 7.5 17.4 7.5s12.9-2.7 17.4-7.5l136-144c6.6-7 8.4-17.2 4.6-26s-12.5-14.5-22-14.5l-72 0 0-288c0-17.7-14.3-32-32-32L128 0C110.3 0 96 14.3 96 32l0 288-72 0c-9.6 0-18.2 5.7-22 14.5z"/>
+                      </svg>
+                    </div>
                     <label class="block font-medium text-slate-800 text-base">
                       <%= 
                         if is_nil(@local_currency) || is_nil(@local_currency.local_currency_period.current_assets_total), 
@@ -292,9 +324,14 @@
                 </div>
 
 
-                <div class="w-full p-2 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
+                <div class="w-full p-2 h-20 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
                   <div>
-                    <label class="block font-bold text-slate-600 text-sm">Long Term Debt</label>
+                    <div class="w-full inline-flex items-center">
+                      <label class="block font-bold text-slate-600 text-sm">Long Term Debt</label>
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="w-4 h-4 text-red-600" fill="currentColor">
+                        <path d="M2 334.5c-3.8 8.8-2 19 4.6 26l136 144c4.5 4.8 10.8 7.5 17.4 7.5s12.9-2.7 17.4-7.5l136-144c6.6-7 8.4-17.2 4.6-26s-12.5-14.5-22-14.5l-72 0 0-288c0-17.7-14.3-32-32-32L128 0C110.3 0 96 14.3 96 32l0 288-72 0c-9.6 0-18.2 5.7-22 14.5z"/>
+                      </svg>
+                    </div>
                     <label class="block font-medium text-slate-800 text-base">
                       <%= 
                         if is_nil(@local_currency) || is_nil(@local_currency.local_currency_period.current_assets_total), 
@@ -310,10 +347,27 @@
                   </div>
                 </div>
 
+                <div class="bg-slate-300 h-1 w-full rounded"></div>
 
-                <div class="w-full p-2 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
+
+                <div class="w-full p-2 h-24 bg-slate-200 border-2 border-slate-500 rounded-lg relative inline-flex items-center">
                   <div>
-                    <label class="block font-bold text-slate-600 text-sm">Stockholder Equity</label>
+                    <label class="block font-bold text-slate-600 text-sm">Total Liabilities</label>
+                    <label class="block font-medium text-slate-800 text-2xl">
+                      <%= sum_totals(@local_currency, @currency_type, [{:add, :current_liabilities_total}, {:add, :long_term_debt_total}]) %>
+                    </label>
+                  </div>
+                  
+                </div>
+
+                <div class="w-full p-2 h-20 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
+                  <div>
+                    <div class="w-full inline-flex items-center">
+                      <label class="block font-bold text-slate-600 text-sm">Stockholder Equity</label>
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="w-4 h-4 text-red-600" fill="currentColor">
+                        <path d="M2 334.5c-3.8 8.8-2 19 4.6 26l136 144c4.5 4.8 10.8 7.5 17.4 7.5s12.9-2.7 17.4-7.5l136-144c6.6-7 8.4-17.2 4.6-26s-12.5-14.5-22-14.5l-72 0 0-288c0-17.7-14.3-32-32-32L128 0C110.3 0 96 14.3 96 32l0 288-72 0c-9.6 0-18.2 5.7-22 14.5z"/>
+                      </svg>
+                    </div>
                     <label class="block font-medium text-slate-800 text-base">
                       <%= 
                         if is_nil(@local_currency) || is_nil(@local_currency.local_currency_period.current_assets_total), 
@@ -332,11 +386,18 @@
                 <div class="bg-slate-300 h-1 w-full rounded"></div>
 
 
-                <div class="w-full p-2 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
+                <div class={if Money.equal?(
+                  sum_totals(@local_currency, @currency_type, [{:add, :current_liabilities_total}, {:add, :long_term_debt_total}, {:add, :stockholder_equity_total}]),
+                  sum_totals(@local_currency, @currency_type, [{:add, :current_assets_total}, {:add, :fixed_assets_total}, {:add, :other_assets_total}])
+                ), do: """
+                w-full p-2 h-24 bg-green-200 border-2 border-green-500 rounded-lg relative inline-flex items-center
+                """, else: """
+                w-full p-2 h-24 bg-red-200 border-2 border-red-500 rounded-lg relative inline-flex items-center
+                """}>
                   <div>
                     <label class="block font-bold text-slate-600 text-sm">Total Liability and Equity</label>
                     <label class="block font-medium text-slate-800 text-2xl">
-                      <%= sum_totals(@local_currency, @currency_type, [:current_liabilities_total, :long_term_debt_total, :stockholder_equity_total]) %>
+                      <%= sum_totals(@local_currency, @currency_type, [{:add, :current_liabilities_total}, {:add, :long_term_debt_total}, {:add, :stockholder_equity_total}]) %>
                     </label>
                   </div>
                   
@@ -357,9 +418,15 @@
             <div class="w-full grid grid-cols-1 gap-4 mt-4">
 
 
-              <div class="w-full p-2 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
+              <div class="w-full p-2 h-20 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
                 <div>
-                  <label class="block font-bold text-slate-600 text-sm">Gross Margin</label>
+                  <div class="w-full inline-flex items-center">
+                    <label class="block font-bold text-slate-600 text-sm">Gross Margin</label>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="w-4 h-4 text-green-600" fill="currentColor">
+                      <path d="M318 177.5c3.8-8.8 2-19-4.6-26l-136-144C172.9 2.7 166.6 0 160 0s-12.9 2.7-17.4 7.5l-136 144c-6.6 7-8.4 17.2-4.6 26S14.4 192 24 192H96l0 288c0 17.7 14.3 32 32 32h64c17.7 0 32-14.3 32-32l0-288h72c9.6 0 18.2-5.7 22-14.5z"/>
+                    </svg>
+                  </div>
+                  
                   <label class="block font-medium text-slate-800 text-base">
                     <%= 
                       if is_nil(@local_currency) || is_nil(@local_currency.local_currency_period.current_assets_total), 
@@ -376,9 +443,14 @@
               </div>
 
 
-              <div class="w-full p-2 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
+              <div class="w-full p-2 h-20 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
                 <div>
-                  <label class="block font-bold text-slate-600 text-sm">Operating Income</label>
+                  <div class="w-full inline-flex items-center">
+                    <label class="block font-bold text-slate-600 text-sm">Operating Income</label>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="w-4 h-4 text-red-600" fill="currentColor">
+                      <path d="M2 334.5c-3.8 8.8-2 19 4.6 26l136 144c4.5 4.8 10.8 7.5 17.4 7.5s12.9-2.7 17.4-7.5l136-144c6.6-7 8.4-17.2 4.6-26s-12.5-14.5-22-14.5l-72 0 0-288c0-17.7-14.3-32-32-32L128 0C110.3 0 96 14.3 96 32l0 288-72 0c-9.6 0-18.2 5.7-22 14.5z"/>
+                    </svg>
+                  </div>
                   <label class="block font-medium text-slate-800 text-base">
                     <%= 
                       if is_nil(@local_currency) || is_nil(@local_currency.local_currency_period.current_assets_total), 
@@ -395,9 +467,15 @@
               </div>
 
 
-              <div class="w-full p-2 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
+              <div class="w-full p-2 h-20 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
                 <div>
-                  <label class="block font-bold text-slate-600 text-sm">Net Income Before Taxes</label>
+
+                  <div class="w-full inline-flex items-center">
+                    <label class="block font-bold text-slate-600 text-sm">Net Income Before Taxes</label>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="w-4 h-4 text-green-600" fill="currentColor">
+                      <path d="M318 177.5c3.8-8.8 2-19-4.6-26l-136-144C172.9 2.7 166.6 0 160 0s-12.9 2.7-17.4 7.5l-136 144c-6.6 7-8.4 17.2-4.6 26S14.4 192 24 192H96l0 288c0 17.7 14.3 32 32 32h64c17.7 0 32-14.3 32-32l0-288h72c9.6 0 18.2-5.7 22-14.5z"/>
+                    </svg>
+                  </div>
                   <label class="block font-medium text-slate-800 text-base">
                     <%= 
                       if is_nil(@local_currency) || is_nil(@local_currency.local_currency_period.current_assets_total), 
@@ -413,14 +491,32 @@
                 </div>
               </div>
 
+              <div class="w-full">
+                <.live_component
+                  module={VinmarWeb.InputComponent}
+                  id="taxes"
+                  name="Taxes"
+                  form={@form}
+                  type="number"
+                  validations={[]}
+                  required={false}
+                  return={:updated_form_taxes}
+                />
+              </div>
+
               <div class="bg-slate-300 h-1 w-full rounded"></div>
 
 
-              <div class="w-full p-2 bg-slate-50 border-2 border-slate-200 rounded-lg relative inline-flex items-center">
+              <div class="w-full p-2 h-24 bg-slate-200 border-2 border-slate-500 rounded-lg relative inline-flex items-center">
                 <div>
                   <label class="block font-bold text-slate-600 text-sm">Net Income After Taxes</label>
                   <label class="block font-medium text-slate-800 text-2xl">
-                    <%= sum_totals(@local_currency, @currency_type, [:net_income_total, :operating_income_total, :gross_margin]) %>
+                    <%= added_taxes(
+                      @local_currency, 
+                      @currency_type,
+                      @form
+                      ) 
+                    %>
                   </label>
                 </div>
                 
@@ -477,12 +573,177 @@
   
 <.live_component module={VinmarWeb.LoadingComponent} id="loading" loading={@loading} />
 
+<.modal_right modal_form_open={@modal_ratio_open} >
+  <div class="w-full">
+    <div class="inline-flex items-center w-full">
+      <label class="block text-slate-500 font-semibold">Ratio Analysis</label>
+      <%= if !is_nil(@currency_type) do %>
+        <div class="ml-auto">
+          <label class="text-slate-600 font-bold text-xs block pl-2">Currency</label>
+          <div class="px-4 py-1 rounded-full bg-sky-100 text-sky-800 font-bold text-sm">
+            <%= String.replace(@currency_type.money_name, "_", " ") %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="overflow-y-scroll w-full h-[80vh]">
+      <div class="w-full grid grid-cols-1 lg:grid-cols-4 gap-3 lg:gap-4">
+        <div class="col-span-4 text-xl font-bold text-slate-600">
+          Operating Performance
+        </div>
+        <div class="bg-slate-100 rounded-lg px-4 py-3">
+          <label class="text-sm font-bold text-slate-600 block">Gross Profit Margin</label>
+          <label class="block text-medium">30%</label>
+        </div>
+
+        <div class="bg-slate-100 rounded-lg px-4 py-3">
+          <label class="text-sm font-bold text-slate-600 block">Operating Profit Margin</label>
+          <label class="block text-medium">22%</label>
+        </div>
+
+        <div class="bg-slate-100 rounded-lg px-4 py-3">
+          <label class="text-sm font-bold text-slate-600 block">Net Profit Margin</label>
+          <label class="block text-medium">43%</label>
+        </div>
+
+        <div class="bg-slate-100 rounded-lg px-4 py-3">
+          <label class="text-sm font-bold text-slate-600 block">Return of Assets</label>
+          <label class="block text-medium">65%</label>
+        </div>
+
+        <div class="bg-slate-100 rounded-lg px-4 py-3">
+          <label class="text-sm font-bold text-slate-600 block">ROCE</label>
+          <label class="block text-medium">21%</label>
+        </div>
+
+        <div class="bg-slate-100 rounded-lg px-4 py-3">
+          <label class="text-sm font-bold text-slate-600 block">Leverage</label>
+          <label class="block text-medium">0.23</label>
+        </div>
+
+        <div class="bg-slate-100 rounded-lg px-4 py-3">
+          <label class="text-sm font-bold text-slate-600 block">Return on Equity</label>
+          <label class="block text-medium">10%</label>
+        </div>
+
+        <div class="bg-slate-100 rounded-lg px-4 py-3">
+          <label class="text-sm font-bold text-slate-600 block">Cash Flow Margin</label>
+          <label class="block text-medium">22%</label>
+        </div>
+
+
+
+        <div class="col-span-4 text-xl font-bold text-slate-600">
+          Operating Efficiency
+        </div>
+        <div class="bg-slate-100 rounded-lg px-4 py-3">
+          <label class="text-sm font-bold text-slate-600 block">DSO</label>
+          <label class="block text-medium">69</label>
+        </div>
+
+        <div class="bg-slate-100 rounded-lg px-4 py-3">
+          <label class="text-sm font-bold text-slate-600 block">DIO</label>
+          <label class="block text-medium">124</label>
+        </div>
+
+        <div class="bg-slate-100 rounded-lg px-4 py-3">
+          <label class="text-sm font-bold text-slate-600 block">DPO</label>
+          <label class="block text-medium">50</label>
+        </div>
+
+        <div class="bg-slate-100 rounded-lg px-4 py-3">
+          <label class="text-sm font-bold text-slate-600 block">DWO</label>
+          <label class="block text-medium">130</label>
+        </div>
+
+        <div class="bg-slate-100 rounded-lg px-4 py-3 col-span-2">
+          <label class="text-sm font-bold text-slate-600 block">Net Asset TO (Sales/Capital Emp.)</label>
+          <label class="block text-medium">1.23</label>
+        </div>
+
+        <div class="bg-slate-100 rounded-lg px-4 py-3">
+          <label class="text-sm font-bold text-slate-600 block">Sales/Total Assets</label>
+          <label class="block text-medium">1.44</label>
+        </div>
+
+
+
+        <div class="col-span-4 text-xl font-bold text-slate-600">
+          Liquidity Measures
+        </div>
+        <div class="bg-slate-100 rounded-lg px-4 py-3">
+          <label class="text-sm font-bold text-slate-600 block">Current Ratio</label>
+          <label class="block text-medium">42344</label>
+        </div>
+
+        <div class="bg-slate-100 rounded-lg px-4 py-3">
+          <label class="text-sm font-bold text-slate-600 block">Quick Ratio</label>
+          <label class="block text-medium">42344</label>
+        </div>
+
+        <div class="bg-slate-100 rounded-lg px-4 py-3 col-span-2">
+          <label class="text-sm font-bold text-slate-600 block">Cash Flow from Operation</label>
+          <label class="block text-medium">42344</label>
+        </div>
+
+        <div class="bg-slate-100 rounded-lg px-4 py-3 col-span-2">
+          <label class="text-sm font-bold text-slate-600 block">Cash Flow Liquidity Ratio</label>
+          <label class="block text-medium">42344</label>
+        </div>
+
+        <div class="bg-slate-100 rounded-lg px-4 py-3">
+          <label class="text-sm font-bold text-slate-600 block">Working Capital</label>
+          <label class="block text-medium">42344</label>
+        </div>
+
+
+
+        <div class="col-span-4 text-xl font-bold text-slate-600">
+          Leverage Measures
+        </div>
+        <div class="bg-slate-100 rounded-lg px-4 py-3">
+          <label class="text-sm font-bold text-slate-600 block">Debt to Equity</label>
+          <label class="block text-medium">42344</label>
+        </div>
+
+        <div class="bg-slate-100 rounded-lg px-4 py-3">
+          <label class="text-sm font-bold text-slate-600 block">Debt Ratio</label>
+          <label class="block text-medium">42344</label>
+        </div>
+
+        <div class="bg-slate-100 rounded-lg px-4 py-3">
+          <label class="text-sm font-bold text-slate-600 block">Times Interest Earned</label>
+          <label class="block text-medium">42344</label>
+        </div>
+
+        <div class="bg-slate-100 rounded-lg px-4 py-3">
+          <label class="text-sm font-bold text-slate-600 block">LT to Working Capital</label>
+          <label class="block text-medium">42344</label>
+        </div>
+
+        <div class="bg-slate-100 rounded-lg px-4 py-3 col-span-2">
+          <label class="text-sm font-bold text-slate-600 block">Debt Service Coverage Ratio (DSCR)</label>
+          <label class="block text-medium">42344</label>
+        </div>
+
+
+
+
+      </div>
+      
+    </div>
+    <div class="w-full flex mt-8">
+      <button type="button" phx-click="modal_form_close"
+        class="mx-auto px-6 py-2 rounded-lg bg-slate-300 text-sm font-bold text-slate-700 hover:bg-slate-500 hover:text-slate-100">
+        Cerrar 
+      </button>
+    </div>
+  </div>
+</.modal_right>
+  
 
 <.modal_right modal_form_open={@modal_form_open} >
-
-
-
-
 
   <form phx-submit="submit_form_step" class="w-full">
 
@@ -1130,6 +1391,11 @@
         </div>
     
         <div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4 mt-4">
+
+          <%= if !is_nil(@local_currency) && !is_nil(@local_currency.local_currency_period.gross_margin_total) do %>
+            <input class="hidden" name="gross_margin_total" value={@local_currency.local_currency_period.gross_margin_total |> Money.to_decimal() |> Decimal.to_string()}>
+          <% end %>
+          
           <.live_component
             module={VinmarWeb.InputComponent}
             id="salaries_wages"
@@ -1249,6 +1515,11 @@
         </div>
     
         <div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4 mt-4">
+
+          <%= if !is_nil(@local_currency) && !is_nil(@local_currency.local_currency_period.operating_income_total) do %>
+            <input class="hidden" name="operating_income_total" value={@local_currency.local_currency_period.operating_income_total |> Money.to_decimal() |> Decimal.to_string()}>
+          <% end %>
+
           <.live_component
             module={VinmarWeb.InputComponent}
             id="interest_expense"
@@ -1309,11 +1580,6 @@
       </div>
     <% end %>
 
-
-
-
-
-    
     <div class="w-full flex pt-6 lg:pt-0 mt-8 lg:mt-16">
       <div class="mx-auto relative">
         <div class="inline-flex items-center">

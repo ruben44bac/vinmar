@@ -136,6 +136,7 @@ defmodule VinmarWeb.LocalCurrencyLive.Form do
        option_no_months: get_no_months(),
        option_periods: get_option_periods(),
        modal_form_open: false,
+       modal_ratio_open: false,
        modal_form_type: :current_assets
      )}
   end
@@ -168,6 +169,12 @@ defmodule VinmarWeb.LocalCurrencyLive.Form do
     {:noreply, assign(socket, form_step: form_step, valid_form: true, error_message: "")}
   end
 
+  def handle_info({:updated_form_taxes, %{form: form}}, socket) do
+    IO.inspect(form, label: "form_step ---> ")
+
+    {:noreply, assign(socket, form: form, valid_form: true, error_message: "")}
+  end
+
   def handle_info({:update_currency_type, %{form: form, valid: _valid}}, socket) do
     currency_type = Enum.find(socket.assigns.currency_types, &(&1.id == form["currency_type_id"]))
 
@@ -180,10 +187,6 @@ defmodule VinmarWeb.LocalCurrencyLive.Form do
 
     {:noreply,
      assign(socket, form: form, valid_form: true, error_message: "", customer: customer)}
-  end
-
-  def handle_info({:change_step, %{step: step}}, socket) do
-    {:noreply, assign(socket, current_step: step)}
   end
 
   def handle_info({:DOWN, _, :process, _, :normal}, socket), do: {:noreply, socket}
@@ -233,14 +236,18 @@ defmodule VinmarWeb.LocalCurrencyLive.Form do
 
   def handle_event("submit_form_step", params, socket) do
     money_key = String.to_atom(socket.assigns.currency_type.money_key)
+    local_currency = socket.assigns.local_currency
 
     params =
       params
       |> Map.merge(socket.assigns.form_step)
-      |> LocalCurrencyPeriodManager.calculate_total(money_key, socket.assigns.type_step)
+      |> LocalCurrencyPeriodManager.calculate_total(
+        money_key,
+        local_currency.local_currency_period,
+        socket.assigns.type_step
+      )
+      |> format_money(@money_fields, money_key)
       |> IO.inspect(label: "Whats ---_> ")
-
-    local_currency = socket.assigns.local_currency
 
     local_currency.local_currency_period
     |> LocalCurrencyPeriodManager.update(params)
@@ -263,7 +270,7 @@ defmodule VinmarWeb.LocalCurrencyLive.Form do
   end
 
   def handle_event("modal_form_close", _params, socket) do
-    {:noreply, assign(socket, modal_form_open: false)}
+    {:noreply, assign(socket, modal_form_open: false, modal_ratio_open: false)}
   end
 
   def handle_event("modal_form_open", %{"type" => type}, socket) do
@@ -285,6 +292,36 @@ defmodule VinmarWeb.LocalCurrencyLive.Form do
      )}
   end
 
+  def handle_event("modal_ratio_open", _params, socket) do
+    {:noreply, assign(socket, modal_ratio_open: true)}
+  end
+
+  def added_taxes(_sum, nil, _form), do: "0"
+
+  def added_taxes(nil, _nil, _form), do: "0"
+
+  def added_taxes(local_currency, currency_type, form) do
+    money_key = String.to_atom(currency_type.money_key)
+
+    sum =
+      local_currency
+      |> Map.get(:local_currency_period, %{})
+      |> Map.get(:net_income_total, Money.new!(money_key, "0"))
+
+    sum = if is_nil(sum), do: Money.new!(money_key, "0"), else: sum
+
+    amount = Map.get(form, "taxes", "0")
+
+    if(amount == "", do: "0", else: amount)
+    |> then(&Money.new!(money_key, &1))
+    |> Money.add(sum)
+    |> IO.inspect(label: "sum --> ")
+    |> case do
+      {:ok, mon} -> mon
+      _error -> Money.new!(money_key, "0")
+    end
+  end
+
   def sum_totals(nil, nil, _list), do: "0"
 
   def sum_totals(_, nil, _list), do: "0"
@@ -294,19 +331,35 @@ defmodule VinmarWeb.LocalCurrencyLive.Form do
   def sum_totals(local_currency, currency_type, list) do
     money_key = String.to_atom(currency_type.money_key)
 
+    list_keys =
+      list
+      |> Enum.map(fn {k, v} -> v end)
+
     local_currency.local_currency_period
-    |> Map.take(list)
-    |> Enum.reduce(Money.new(money_key, "0"), fn {k, val}, acc ->
-      if is_nil(val) do
+    |> Map.take(list_keys)
+    |> Enum.reduce(Money.new(money_key, "0"), fn {k, val_complete}, acc ->
+      {type, _val} = get_sum_type(k, list)
+
+      if is_nil(val_complete) do
         acc
       else
-        Money.add(val, acc)
+        if type == :add do
+          Money.add(val_complete, acc)
+        else
+          val_complete
+          |> Money.mult!(-1)
+          |> Money.add(acc)
+        end
         |> case do
           {:ok, mon} -> mon
           _error -> acc
         end
       end
     end)
+  end
+
+  defp get_sum_type(key, list) do
+    Enum.find(list, fn {k, v} -> v == key end)
   end
 
   def get_currency(currency_id, currency_types) do
@@ -377,8 +430,6 @@ defmodule VinmarWeb.LocalCurrencyLive.Form do
   end
 
   defp update_create(params, socket, local_currency) do
-    step = socket.assigns.current_step
-
     local_currency
     |> LocalCurrencyManager.update(params, %{
       type: "Update local_currency",

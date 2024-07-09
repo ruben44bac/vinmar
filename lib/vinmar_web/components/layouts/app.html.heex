@@ -1,4 +1,6 @@
+<%= if !is_nil(@current_user) do %>
 <.live_component module={VinmarWeb.NavbarComponent} id={"sidebar_#{Ecto.UUID.generate()}"} current_user={@current_user} />
+<% end %>
 <main class="w-full bg-slate-100 min-h-screen">
   <div class="">
     <.flash_group flash={@flash} />

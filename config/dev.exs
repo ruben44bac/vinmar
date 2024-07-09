@@ -2,6 +2,10 @@ import Config
 
 # Configure your database
 config :vinmar, Vinmar.Repo,
+  # username: "gigalixir_admin",
+  # password: "pw-3f3064e9-72f7-461e-9ae8-b93b03382671",
+  # hostname: "34.172.105.70",
+  # database: "e71b2178-7ec5-4158-aecf-d9310eab1b6d",
   username: "postgres",
   password: "postgres",
   hostname: "localhost",

@@ -12,6 +12,7 @@ defmodule Vinmar.LocalCurrencies.LocalCurrencyPeriod do
   @optional_fields [
     :local_currency_id,
     :user_id,
+    :year,
     :balance_f_x,
     :pl_f_x,
     :period,
@@ -119,6 +120,7 @@ defmodule Vinmar.LocalCurrencies.LocalCurrencyPeriod do
     field :balance_f_x, Money.Ecto.Composite.Type
     field :pl_f_x, :decimal
     field :period, :string
+    field :year, :string
     field :statetment_a, :utc_datetime
     field :statetment_as_to, :utc_datetime
     field :no_months, :integer

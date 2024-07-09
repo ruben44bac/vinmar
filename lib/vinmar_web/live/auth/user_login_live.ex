@@ -3,7 +3,7 @@ defmodule VinmarWeb.UserLoginLive do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
+    <div class="mx-auto max-w-sm pt-10">
       <.header class="text-center">
         Log in to account
         <:subtitle>

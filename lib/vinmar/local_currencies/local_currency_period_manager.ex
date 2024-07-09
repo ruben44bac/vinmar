@@ -6,16 +6,68 @@ defmodule Vinmar.LocalCurrencies.LocalCurrencyPeriodManager do
     repo: Vinmar.Repo,
     only: [:get_all, :create, :get, :delete, :update]
 
-  def calculate_total(form, money_key, type) do
-    total =
-      Enum.reduce(form, Decimal.new("0"), fn {k, v}, acc ->
-        case Decimal.cast(v) do
-          {:ok, decimal} -> Decimal.add(acc, decimal)
-          _error -> acc
-        end
-      end)
+  def calculate_total(form, money_key, local_currency_period, type) do
+    total = sum_amounts(form, :decimal)
 
-    Map.put(form, "#{type}_total", Money.new(money_key, total))
+    form
+    |> Map.put("#{type}_total", Money.new!(money_key, total))
+    |> calculate_extra_total(money_key, local_currency_period, type)
+  end
+
+  defp calculate_extra_total(
+         %{"gross_margin_total" => other_total} = form,
+         money_key,
+         local_currency_period,
+         "gross_margin"
+       ) do
+    total =
+      local_currency_period
+      |> Map.take(operating_income())
+      |> IO.inspect(label: "whats 1 --> ")
+      |> sum_amounts(money_key)
+      |> IO.inspect(label: "whats 22 --> ")
+      |> Money.add!(other_total)
+
+    form
+    |> Map.put("operating_income_total", total)
+    |> calculate_extra_total(money_key, local_currency_period, "operating_income")
+  end
+
+  defp calculate_extra_total(
+         %{"operating_income_total" => other_total} = form,
+         money_key,
+         local_currency_period,
+         "operating_income"
+       ) do
+    total =
+      local_currency_period
+      |> Map.take(net_income())
+      |> IO.inspect(label: "whats 2 --> ")
+      |> sum_amounts(money_key)
+      |> Money.add!(other_total)
+
+    form
+    |> Map.put("net_income_total", total)
+  end
+
+  defp calculate_extra_total(form, _money_key, _local_currency_period, _type), do: form
+
+  defp sum_amounts(form_map, :decimal) do
+    Enum.reduce(form_map, Decimal.new("0"), fn {k, v}, acc ->
+      case Decimal.cast(v) do
+        {:ok, decimal} -> Decimal.add(acc, decimal)
+        _error -> acc
+      end
+    end)
+  end
+
+  defp sum_amounts(form_map, money_key) do
+    Enum.reduce(form_map, Money.new!(money_key, "0"), fn {k, v}, acc ->
+      case v do
+        nil -> acc
+        money -> Money.add!(acc, money)
+      end
+    end)
   end
 
   def get_topic_keys(topic) do
