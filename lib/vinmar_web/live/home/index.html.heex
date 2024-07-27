@@ -83,7 +83,7 @@
 
     <div class="lg:flex mt-4 lg:mt-10">
       <div class="w-full lg:w-1/2 lg:p-4">
-        <div class="w-full bg-white shadow p-4 rounded-lg">
+        <div id="chart-container" phx-hook="Chart" data-chart-data={@chart_data |> Jason.encode!()} class="w-full bg-white shadow p-4 rounded-lg">
           <canvas class="w-full h-auto" id="myChart"></canvas>
         </div>
       </div>
@@ -98,26 +98,6 @@
     
 </div>
 <script>
-  const ctx = document.getElementById('myChart');
-
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: ['USA', 'Mexico', 'Brazil', 'Canada', 'Colombia', 'Argentina'],
-      datasets: [{
-        label: 'Credit Analysis by Country',
-        data: [12, 19, 3, 5, 2, 3],
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true
-        }
-      }
-    }
-  });
 
 
 

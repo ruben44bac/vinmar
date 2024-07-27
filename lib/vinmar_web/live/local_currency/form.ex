@@ -118,6 +118,7 @@ defmodule VinmarWeb.LocalCurrencyLive.Form do
        tree: [:home, :local_currency_list],
        form: %{},
        form_step: %{},
+       form_filter: %{},
        page_title: "",
        type_step: "",
        loading: true,
@@ -137,7 +138,9 @@ defmodule VinmarWeb.LocalCurrencyLive.Form do
        option_periods: get_option_periods(),
        modal_form_open: false,
        modal_ratio_open: false,
-       modal_form_type: :current_assets
+       modal_form_type: :current_assets,
+       available_periods: [],
+       available_periods_selected: []
      )}
   end
 
@@ -160,18 +163,14 @@ defmodule VinmarWeb.LocalCurrencyLive.Form do
   end
 
   def handle_info({:updated_form, %{form: form, valid: _valid}}, socket) do
-    IO.inspect(form, label: "form ---> ")
     {:noreply, assign(socket, form: form, valid_form: true, error_message: "")}
   end
 
   def handle_info({:updated_form_step, %{form: form_step, valid: _valid}}, socket) do
-    IO.inspect(form_step, label: "form_step ---> ")
     {:noreply, assign(socket, form_step: form_step, valid_form: true, error_message: "")}
   end
 
   def handle_info({:updated_form_taxes, %{form: form}}, socket) do
-    IO.inspect(form, label: "form_step ---> ")
-
     {:noreply, assign(socket, form: form, valid_form: true, error_message: "")}
   end
 
@@ -182,6 +181,19 @@ defmodule VinmarWeb.LocalCurrencyLive.Form do
      assign(socket, form: form, valid_form: true, error_message: "", currency_type: currency_type)}
   end
 
+  def handle_info({:filter_periods, %{selects: available_periods}}, socket) do
+    Task.async(fn ->
+      available_periods_selected =
+        available_periods
+        |> Enum.map(& &1.id)
+        |> LocalCurrencyPeriodManager.get_periods()
+
+      {:filter_periods, available_periods_selected}
+    end)
+
+    {:noreply, assign(socket, loading: true, available_periods_selected: available_periods)}
+  end
+
   def handle_info({:customer, %{form: form, customer: customer}}, socket) do
     form = Map.put(form, "customer_id", if(is_nil(customer), do: nil, else: customer.id))
 
@@ -190,6 +202,11 @@ defmodule VinmarWeb.LocalCurrencyLive.Form do
   end
 
   def handle_info({:DOWN, _, :process, _, :normal}, socket), do: {:noreply, socket}
+
+  def handle_info({_ref, {:filter_periods, available_periods_selected}}, socket) do
+    {:noreply,
+     assign(socket, loading: false, available_periods_selected: available_periods_selected)}
+  end
 
   def handle_info({_ref, :get_lists}, socket) do
     currency_types = CurrencyTypeManagment.get_all([], [], [], [])
@@ -205,13 +222,26 @@ defmodule VinmarWeb.LocalCurrencyLive.Form do
 
     option_financial_statement_formats = convert_options(financial_statement_formats, :name)
 
+    available_periods =
+      socket.assigns.local_currency
+      |> LocalCurrencyManager.get_available_periods()
+      |> Enum.map(fn data ->
+        %{
+          id: data.id,
+          title: "#{data.year} - #{data.period}",
+          subtitle:
+            "No Months: #{data.no_months}, #{Timex.Format.DateTime.Formatter.format!(data.statetment_as_to, "%Y-%m-%d ", :strftime)}"
+        }
+      end)
+
     {:noreply,
      assign(socket,
        loading: false,
        currency_types: currency_types,
        option_currency_types: option_currency_types,
        financial_statement_formats: financial_statement_formats,
-       option_financial_statement_formats: option_financial_statement_formats
+       option_financial_statement_formats: option_financial_statement_formats,
+       available_periods: available_periods
      )}
   end
 
@@ -247,7 +277,6 @@ defmodule VinmarWeb.LocalCurrencyLive.Form do
         socket.assigns.type_step
       )
       |> format_money(@money_fields, money_key)
-      |> IO.inspect(label: "Whats ---_> ")
 
     local_currency.local_currency_period
     |> LocalCurrencyPeriodManager.update(params)
@@ -279,7 +308,6 @@ defmodule VinmarWeb.LocalCurrencyLive.Form do
         socket.assigns.local_currency.local_currency_period,
         LocalCurrencyPeriodManager.get_topic_keys(type)
       )
-      |> IO.inspect(label: "form --->>>>>> ")
 
     {:noreply,
      assign(socket,
@@ -315,7 +343,6 @@ defmodule VinmarWeb.LocalCurrencyLive.Form do
     if(amount == "", do: "0", else: amount)
     |> then(&Money.new!(money_key, &1))
     |> Money.add(sum)
-    |> IO.inspect(label: "sum --> ")
     |> case do
       {:ok, mon} -> mon
       _error -> Money.new!(money_key, "0")
@@ -388,7 +415,6 @@ defmodule VinmarWeb.LocalCurrencyLive.Form do
 
           1
           |> Decimal.div(balance_f_x)
-          |> IO.inspect(label: "div ---> ")
           |> then(&Money.new(key, &1))
       end
     else
@@ -503,7 +529,6 @@ defmodule VinmarWeb.LocalCurrencyLive.Form do
 
   defp validate_form(params) do
     params
-    |> IO.inspect(label: "data ---> ")
     |> Enum.reduce([], fn
       {"customer_id", "0"}, acc -> acc ++ ["Customer"]
       {"currency_type_id", "0"}, acc -> acc ++ ["Currency"]

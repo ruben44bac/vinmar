@@ -190,6 +190,21 @@
             </div>
           </div>
         <% end %>
+        <div class="col-span-3">
+          <div class="w-full rounded-lg bg-white p-4">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4">
+              <.live_component
+                module={VinmarWeb.MultiSelectComponent}
+                id="period_compare"
+                name="Period to compare"
+                options={@available_periods}
+                return={:filter_periods}
+              />
+            </div>
+
+          </div>
+        </div>
+
         <div class="col-span-2">
           <div class="bg-white rounded-lg p-4 border">
             <div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
@@ -197,7 +212,7 @@
                 <div class="inline-flex items-top w-full h-20">
                   <label class="block text-slate-500 font-semibold">Balance Sheet</label>
                   <div class="ml-auto">
-                    <button phx-click="modal_ratio_open" type="button" class=" px-6 py-2 rounded-lg bg-amber-700 text-white">
+                    <button phx-click="modal_ratio_open" type="button" class=" px-6 py-2 font-bold rounded-lg bg-amber-700 text-white">
                       Ratio Analysis
                     </button>
                   </div>
@@ -763,98 +778,149 @@
           <% end %>
         </div>
     
-        <div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4 mt-4">
-          <.live_component
-            module={VinmarWeb.InputComponent}
-            id="cash"
-            name="Cash"
-            form={@form_step}
-            type="number"
-            validations={[]}
-            required={false}
-            return={:updated_form_step}
-          />
-    
-          <.live_component
-            module={VinmarWeb.InputComponent}
-            id="accounts_receivable_net"
-            name="Accounts Receivable, net"
-            form={@form_step}
-            type="number"
-            validations={[]}
-            required={false}
-            return={:updated_form_step}
-          />
-    
-          <.live_component
-            module={VinmarWeb.InputComponent}
-            id="inventory"
-            name="Inventory"
-            form={@form_step}
-            type="number"
-            validations={[]}
-            required={false}
-            return={:updated_form_step}
-          />
-    
-          <.live_component
-            module={VinmarWeb.InputComponent}
-            id="affiliates_advances"
-            name="Advances to Affiliates"
-            form={@form_step}
-            type="number"
-            validations={[]}
-            required={false}
-            return={:updated_form_step}
-          />
-    
-          <.live_component
-            module={VinmarWeb.InputComponent}
-            id="def_refundable_inc_tax"
-            name="Def & Refundable Inc Tax"
-            form={@form_step}
-            type="number"
-            validations={[]}
-            required={false}
-            return={:updated_form_step}
-          />
-    
-          <.live_component
-            module={VinmarWeb.InputComponent}
-            id="prepaid"
-            name="Prepaid"
-            form={@form_step}
-            type="number"
-            validations={[]}
-            required={false}
-            return={:updated_form_step}
-          />
-    
-          <.live_component
-            module={VinmarWeb.InputComponent}
-            id="other_current_assets"
-            name="Other Current Assets"
-            form={@form_step}
-            type="number"
-            validations={[]}
-            required={false}
-            return={:updated_form_step}
-          />
-    
-          <div class="col-span-2">
+        <div class={if Enum.empty?(@available_periods_selected), 
+            do: "w-full grid grid-cols-1 lg:grid-cols-1 gap-3 lg:gap-4 mt-4", 
+            else: "w-full grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4 mt-4"}>
+
+        
+          <div class={if Enum.empty?(@available_periods_selected), 
+            do: "w-full grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4 ", 
+            else: "w-full grid grid-cols-1 lg:grid-cols-1 gap-3 lg:gap-4 mt-10"}>
             <.live_component
-              module={VinmarWeb.TextareaComponent}
-              id="other_current_assets_description"
-              name="Describe Other Current Assets"
+              module={VinmarWeb.InputComponent}
+              id="cash"
+              name="Cash"
               form={@form_step}
-              type="text"
+              type="number"
               validations={[]}
               required={false}
               return={:updated_form_step}
             />
+      
+            <.live_component
+              module={VinmarWeb.InputComponent}
+              id="accounts_receivable_net"
+              name="Accounts Receivable, net"
+              form={@form_step}
+              type="number"
+              validations={[]}
+              required={false}
+              return={:updated_form_step}
+            />
+      
+            <.live_component
+              module={VinmarWeb.InputComponent}
+              id="inventory"
+              name="Inventory"
+              form={@form_step}
+              type="number"
+              validations={[]}
+              required={false}
+              return={:updated_form_step}
+            />
+      
+            <.live_component
+              module={VinmarWeb.InputComponent}
+              id="affiliates_advances"
+              name="Advances to Affiliates"
+              form={@form_step}
+              type="number"
+              validations={[]}
+              required={false}
+              return={:updated_form_step}
+            />
+      
+            <.live_component
+              module={VinmarWeb.InputComponent}
+              id="def_refundable_inc_tax"
+              name="Def & Refundable Inc Tax"
+              form={@form_step}
+              type="number"
+              validations={[]}
+              required={false}
+              return={:updated_form_step}
+            />
+      
+            <.live_component
+              module={VinmarWeb.InputComponent}
+              id="prepaid"
+              name="Prepaid"
+              form={@form_step}
+              type="number"
+              validations={[]}
+              required={false}
+              return={:updated_form_step}
+            />
+      
+            <.live_component
+              module={VinmarWeb.InputComponent}
+              id="other_current_assets"
+              name="Other Current Assets"
+              form={@form_step}
+              type="number"
+              validations={[]}
+              required={false}
+              return={:updated_form_step}
+            />
+      
+            <div class="">
+              <.live_component
+                module={VinmarWeb.TextareaComponent}
+                id="other_current_assets_description"
+                name="Describe Other Current Assets"
+                form={@form_step}
+                type="text"
+                validations={[]}
+                required={false}
+                return={:updated_form_step}
+              />
+            </div>
           </div>
+          <%= if !Enum.empty?(@available_periods_selected) do %>
+            <div class="w-full">
+              <div class="overflow-x-auto flex">
+                <%= for item <- @available_periods_selected do %>
+                  <div class="flex-none w-64 grid grid-cols-1 gap-3 h-full px-2">
+                    <div class="w-full">
+                      <div class="w-full inline-flex items-end">
+                        <label class="font-bold text-sm"><%= item.year %> |</label>
+                        <label class="font-bold text-xs text-slate-700 ml-1"><%= item.period %></label>
+                      </div>
+                      <div class="w-full inline-flex items-end text-slate-600">
+                        <label class="font-bold text-xs"><%= item.no_months %> months - </label>
+                        <label class="font-bold text-xs ml-1"><%= Timex.Format.DateTime.Formatter.format!(item.statetment_as_to, "%Y-%m-%d ", :strftime) %></label>
+                      </div>
+                    </div>
+                    <div class="w-full py-2 px-3 rounded-lg bg-slate-200 text-slate-700 font-bold">
+                      <%= item.cash || "-" %>
+                    </div>
+                    <div class="w-full py-2 px-3 rounded-lg bg-slate-200 text-slate-700 font-bold mt-6">
+                      <%= item.accounts_receivable_net || "-" %>
+                    </div>
+                    <div class="w-full py-2 px-3 rounded-lg bg-slate-200 text-slate-700 font-bold mt-6">
+                      <%= item.inventory || "-" %>
+                    </div>
+                    <div class="w-full py-2 px-3 rounded-lg bg-slate-200 text-slate-700 font-bold mt-6">
+                      <%= item.affiliates_advances || "-" %>
+                    </div>
+                    <div class="w-full py-2 px-3 rounded-lg bg-slate-200 text-slate-700 font-bold mt-6">
+                      <%= item.def_refundable_inc_tax || "-" %>
+                    </div>
+                    <div class="w-full py-2 px-3 rounded-lg bg-slate-200 text-slate-700 font-bold mt-6">
+                      <%= item.prepaid || "-" %>
+                    </div>
+                    <div class="w-full py-2 px-3 rounded-lg bg-slate-200 text-slate-700 font-bold mt-6">
+                      <%= item.other_current_assets || "-" %>
+                    </div>
+                    <div class="w-full py-2 px-3 rounded-lg bg-slate-200 text-slate-700 font-bold mt-6">
+                      <%= item.other_current_assets_description || "-" %>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
         </div>
-    
         
       </div>
     <% end %>

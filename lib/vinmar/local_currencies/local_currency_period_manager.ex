@@ -6,6 +6,16 @@ defmodule Vinmar.LocalCurrencies.LocalCurrencyPeriodManager do
     repo: Vinmar.Repo,
     only: [:get_all, :create, :get, :delete, :update]
 
+  alias Vinmar.LocalCurrencies.LocalCurrencyPeriod
+
+  alias Vinmar.Repo
+
+  def get_periods(ids) do
+    LocalCurrencyPeriod
+    |> where([w], w.id in ^ids)
+    |> Repo.all()
+  end
+
   def calculate_total(form, money_key, local_currency_period, type) do
     total = sum_amounts(form, :decimal)
 
@@ -23,9 +33,7 @@ defmodule Vinmar.LocalCurrencies.LocalCurrencyPeriodManager do
     total =
       local_currency_period
       |> Map.take(operating_income())
-      |> IO.inspect(label: "whats 1 --> ")
       |> sum_amounts(money_key)
-      |> IO.inspect(label: "whats 22 --> ")
       |> Money.add!(other_total)
 
     form
@@ -42,7 +50,6 @@ defmodule Vinmar.LocalCurrencies.LocalCurrencyPeriodManager do
     total =
       local_currency_period
       |> Map.take(net_income())
-      |> IO.inspect(label: "whats 2 --> ")
       |> sum_amounts(money_key)
       |> Money.add!(other_total)
 

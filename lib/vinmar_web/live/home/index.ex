@@ -3,7 +3,21 @@ defmodule VinmarWeb.HomeLive.Index do
 
   def mount(_params, _session, socket) do
     send(self(), :after_join)
-    {:ok, assign(socket, show_table: false)}
+
+    chart_data = %{
+      labels: ["January", "February", "March", "April", "May", "June", "July"],
+      datasets: [
+        %{
+          label: "My First dataset",
+          backgroundColor: "rgba(75, 192, 192, 0.2)",
+          borderColor: "rgba(75, 192, 192, 1)",
+          data: [65, 59, 80, 81, 56, 55, 40]
+        }
+      ]
+    }
+
+
+    {:ok, assign(socket, show_table: false, chart_data: chart_data)}
   end
 
   def handle_info(:after_join, socket) do
